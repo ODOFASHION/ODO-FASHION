@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://odofashion.github.io/ODO-FASHION/sitemap.xml
