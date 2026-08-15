@@ -1,0 +1,1 @@
+(function(){try{const u=new URL(window.location.href);let changed=false;for(const key of [...u.searchParams.keys()]){if(/^utm_/i.test(key)){u.searchParams.delete(key);changed=true;}}if(changed)history.replaceState(null,document.title,u.pathname+(u.search?u.search:'')+(u.hash||''));}catch(e){}})();
