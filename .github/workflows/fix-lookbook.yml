@@ -1,0 +1,42 @@
+name: Fix Lookbook image framing
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fix Lookbook CSS
+        shell: bash
+        run: |
+          cat >> style.css <<'EOF'
+
+/* ODO Lookbook — show the complete product photography */
+.look-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.look-card{min-height:0;aspect-ratio:1/1;padding:0;background:#0b0b0a;display:block}
+.look-card img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;object-position:center;padding:12px;z-index:0;transition:transform .7s cubic-bezier(.2,.7,.2,1),filter .4s}
+.look-card:before{content:"";position:absolute;inset:0;background:linear-gradient(145deg,rgba(200,165,96,.08),transparent 45%,rgba(0,0,0,.16));z-index:1;pointer-events:none}
+.look-card:hover img{transform:scale(1.025);filter:contrast(1.04)}
+.look-card span{position:absolute;left:24px;bottom:24px;z-index:2;text-shadow:0 2px 18px rgba(0,0,0,.8)}
+@media(max-width:1050px){.look-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.look-grid{grid-template-columns:1fr}.look-card{aspect-ratio:1/1}}
+EOF
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add style.css
+          if git diff --cached --quiet; then
+            echo "No CSS changes needed"
+            exit 0
+          fi
+          git commit -m "Fix Lookbook image framing"
+          git push
