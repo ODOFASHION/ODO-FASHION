@@ -7,41 +7,40 @@ on:
       - main
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  upgrade:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          persist-credentials: true
 
       - name: Apply ODO upgrades
         shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
-          if grep -q 'ODO_PREMIUM_LOOKBOOK_V2' style.css; then
-            echo 'Lookbook CSS already present'
-          else
+          if ! grep -q 'ODO_PREMIUM_LOOKBOOK_V2' style.css; then
             cat .github/odo-premium.css >> style.css
           fi
-          if grep -q 'ODO_AI_ASSISTANT_V1' script.js; then
-            echo 'Assistant JS already present'
-          else
+          if ! grep -q 'ODO_AI_ASSISTANT_V1' script.js; then
             cat .github/odo-assistant.js >> script.js
           fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git status --short
-          git add style.css script.js
-          if git diff --cached --quiet; then
-            echo 'No ODO source changes to commit'
-          else
-            git commit -m 'Upgrade Lookbook and add ODO customer assistant'
-            git push origin HEAD:main
-          fi
+          rm -f .github/odo-premium.css .github/odo-assistant.js
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
