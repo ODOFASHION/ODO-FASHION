@@ -37,8 +37,8 @@ jobs:
         shell: bash
         run: |
           set -e
-          if ! grep -q 'url-clean.js' index.html; then
-            sed -i 's#</body>#<script src="url-clean.js"></script></body>#' index.html
+          if ! grep -q 'clean-url.js' index.html; then
+            sed -i 's#</body>#<script src="clean-url.js"></script></body>#' index.html
           fi
       - name: Setup Pages
         uses: actions/configure-pages@v5
