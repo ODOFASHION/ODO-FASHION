@@ -3,262 +3,39 @@ const WHATSAPP_NUMBER_2 = "9779768479483";
 const PRICE = 2500;
 let cart = JSON.parse(localStorage.getItem("odoCart") || "[]");
 
-// ODO owl logo — shared across the header and hero.
 const owlLogo = '<img src="owl-logo.svg" alt="ODO owl logo" class="owl-logo-img">';
-document.querySelectorAll(".brand-icon, .owl-mark").forEach((el) => {
-  el.innerHTML = owlLogo;
-  el.classList.add("logo-holder");
-});
-
+document.querySelectorAll(".brand-icon, .owl-mark").forEach((el) => { el.innerHTML = owlLogo; el.classList.add("logo-holder"); });
 const $ = (selector) => document.querySelector(selector);
+function saveCart(){localStorage.setItem("odoCart",JSON.stringify(cart));renderCart();}
+function money(value){return `NPR ${value.toLocaleString("en-NP")}`;}
+function showToast(text){let toast=$(".toast");if(!toast){toast=document.createElement("div");toast.className="toast";document.body.appendChild(toast)}toast.textContent=text;toast.classList.add("show");clearTimeout(window.odoToastTimer);window.odoToastTimer=setTimeout(()=>toast.classList.remove("show"),1800)}
+function renderCart(){const container=$("#cartItems");const count=cart.reduce((sum,item)=>sum+item.qty,0);const total=cart.reduce((sum,item)=>sum+item.qty*PRICE,0);if($("#cartCount"))$("#cartCount").textContent=count;if($("#cartTotal"))$("#cartTotal").textContent=money(total);if(!container)return;if(!cart.length){container.innerHTML='<p class="empty-cart">Your cart is empty.<br>Choose a piece from the first drop.</p>';return}container.innerHTML=cart.map((item,index)=>`<div class="cart-item"><div><div class="cart-item-name">${item.name}</div><div class="cart-item-meta">SIZE ${item.size} · ${money(PRICE)} each</div><div class="qty-controls"><button data-action="minus" data-index="${index}">−</button><strong>${item.qty}</strong><button data-action="plus" data-index="${index}">+</button><button class="remove-item" data-action="remove" data-index="${index}">REMOVE</button></div></div><div class="cart-item-price">${money(item.qty*PRICE)}</div></div>`).join("")}
+function openCart(){document.body.classList.add("cart-open");$("#cartPanel")?.setAttribute("aria-hidden","false")}
+function closeCart(){document.body.classList.remove("cart-open");$("#cartPanel")?.setAttribute("aria-hidden","true")}
+function addToCart(button){const product=button.closest(".product");const size=product.querySelector(".size-select").value;const name=button.dataset.name;const existing=cart.find(item=>item.name===name&&item.size===size);if(existing)existing.qty+=1;else cart.push({name,size,qty:1});saveCart();openCart();showToast(`${name} — size ${size} added`)}
+$("#cartOpen")?.addEventListener("click",openCart);$("#cartClose")?.addEventListener("click",closeCart);$("#cartOverlay")?.addEventListener("click",closeCart);
+document.querySelectorAll(".add-btn").forEach(button=>button.addEventListener("click",()=>addToCart(button)));
+$("#cartItems")?.addEventListener("click",event=>{const button=event.target.closest("button[data-action]");if(!button)return;const index=Number(button.dataset.index);const action=button.dataset.action;if(action==="plus")cart[index].qty+=1;if(action==="minus")cart[index].qty-=1;if(action==="remove"||cart[index]?.qty<=0)cart.splice(index,1);saveCart()});
 
-function saveCart() {
-  localStorage.setItem("odoCart", JSON.stringify(cart));
-  renderCart();
-}
+function openCODCheckout(){if(!cart.length){showToast("Your cart is empty");return}let modal=document.getElementById("odoCheckoutModal");if(!modal){modal=document.createElement("div");modal.id="odoCheckoutModal";modal.className="checkout-modal";modal.innerHTML=`<div class="checkout-card"><button type="button" class="close-btn checkout-close" aria-label="Close">×</button><p class="eyebrow">ODO FASHION / CHECKOUT</p><h2>PLACE YOUR<br><em>ORDER.</em></h2><p class="checkout-intro">Cash on Delivery · All over Nepal. No online payment required.</p><div class="checkout-summary" id="odoCheckoutSummary"></div><form id="odoCheckoutForm"><label>Full Name<input required name="name" autocomplete="name" placeholder="Your full name"></label><label>Phone Number<input required name="phone" type="tel" autocomplete="tel" placeholder="98XXXXXXXX"></label><label>Province / District / City<input required name="location" placeholder="Kathmandu, Lalitpur, Pokhara…"></label><label>Full Delivery Address<textarea required name="address" rows="3" placeholder="Tole, street, house / landmark"></textarea></label><label>Order Note <span style="text-transform:none;letter-spacing:0;color:#666">(optional)</span><textarea name="note" rows="2" placeholder="Any delivery note?"></textarea></label><button class="checkout-submit" type="submit">CONFIRM COD ORDER →</button></form><p class="cart-note">Your order is prepared here on the website. After confirmation, ODO sends the order details to customer care so the team can confirm stock and delivery.</p></div>`;document.body.appendChild(modal);modal.querySelector(".checkout-close").addEventListener("click",()=>modal.classList.remove("show"));modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("show")});modal.querySelector("#odoCheckoutForm").addEventListener("submit",submitCODOrder)}const total=cart.reduce((sum,item)=>sum+item.qty*PRICE,0);modal.querySelector("#odoCheckoutSummary").innerHTML=cart.map(item=>`<div class="checkout-summary-row"><span>${item.name} · ${item.size} × ${item.qty}</span><strong>${money(item.qty*PRICE)}</strong></div>`).join("")+`<div class="checkout-summary-total"><span>TOTAL · CASH ON DELIVERY</span><strong>${money(total)}</strong></div>`;modal.classList.add("show");modal.querySelector('input[name="name"]').focus()}
+function saveOrderToHistory(order){const orders=JSON.parse(localStorage.getItem("odoOrders")||"[]");orders.unshift(order);localStorage.setItem("odoOrders",JSON.stringify(orders.slice(0,50)))}
+function submitCODOrder(event){event.preventDefault();const form=event.currentTarget;const data=Object.fromEntries(new FormData(form).entries());const total=cart.reduce((sum,item)=>sum+item.qty*PRICE,0);const order={orderNo:`ODO-${Date.now().toString().slice(-7)}`,...data,items:cart,total,payment:"Cash on Delivery",status:"Order Received",createdAt:new Date().toISOString()};saveOrderToHistory(order);const lines=cart.map((item,i)=>`${i+1}. ${item.name} — Size ${item.size} × ${item.qty} = ${money(item.qty*PRICE)}`);const message=["Hi ODO Fashion! 👋","NEW WEBSITE COD ORDER","",`ORDER: ${order.orderNo}`,...lines,"",`TOTAL: ${money(total)}`,"PAYMENT: Cash on Delivery","",`CUSTOMER: ${data.name}`,`PHONE: ${data.phone}`,`LOCATION: ${data.location}`,`ADDRESS: ${data.address}`,data.note?`NOTE: ${data.note}`:""].filter(Boolean).join("\n");form.innerHTML=`<div class="order-success"><p class="eyebrow">ORDER RECEIVED</p><h3>THANK YOU, ${String(data.name).split(" ")[0].toUpperCase()}.</h3><p>Your order <strong>${order.orderNo}</strong> is saved on this device. ODO customer care will confirm availability and delivery.</p><a class="checkout-submit" href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}" target="_blank" rel="noopener">SEND ORDER TO ODO →</a><a class="account-inline-link" href="#" id="openAccountAfterOrder">VIEW MY ORDER HISTORY →</a><p class="cart-note">For another customer-care line, WhatsApp +977 9768479483.</p></div>`;$("#openAccountAfterOrder")?.addEventListener("click",e=>{e.preventDefault();openAccount()});cart=[];saveCart();showToast("Order saved to My Account")}
+const legacyOrderButton=$("#whatsappOrder");if(legacyOrderButton){legacyOrderButton.textContent="CHECKOUT — CASH ON DELIVERY";legacyOrderButton.addEventListener("click",event=>{event.preventDefault();event.stopImmediatePropagation();openCODCheckout()},true)}
 
-function money(value) {
-  return `NPR ${value.toLocaleString("en-NP")}`;
-}
+if($("#support")&&!$("#odoSecondWhatsapp")){const card=document.createElement("div");card.id="odoSecondWhatsapp";card.className="support-card";card.innerHTML=`<span class="support-icon">04</span><h3>WHATSAPP SUPPORT 02</h3><p>Alternative customer-care line for orders, sizing and delivery help.</p><a class="support-button" href="https://wa.me/${WHATSAPP_NUMBER_2}?text=${encodeURIComponent("Hi ODO Fashion! I need customer support.")}" target="_blank" rel="noopener">CHAT ON WHATSAPP →</a>`;$("#support .support-grid")?.appendChild(card)}
 
-function showToast(text) {
-  let toast = $(".toast");
-  if (!toast) {
-    toast = document.createElement("div");
-    toast.className = "toast";
-    document.body.appendChild(toast);
-  }
-  toast.textContent = text;
-  toast.classList.add("show");
-  clearTimeout(window.odoToastTimer);
-  window.odoToastTimer = setTimeout(() => toast.classList.remove("show"), 1800);
-}
+function customerProfile(){return JSON.parse(localStorage.getItem("odoCustomer")||"null")}
+function setCustomer(profile){localStorage.setItem("odoCustomer",JSON.stringify(profile));renderAccount()}
+function getOrders(){return JSON.parse(localStorage.getItem("odoOrders")||"[]")}
+function openAccount(){let modal=document.getElementById("odoAccountModal");if(!modal){modal=document.createElement("div");modal.id="odoAccountModal";modal.className="account-modal";document.body.appendChild(modal);modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("show")})}renderAccount();modal.classList.add("show")}
+function renderAccount(){let modal=document.getElementById("odoAccountModal");if(!modal)return;const profile=customerProfile();const orders=getOrders();modal.innerHTML=`<div class="account-card"><button class="close-btn account-close" aria-label="Close">×</button><div class="account-head"><div><p class="eyebrow">ODO FASHION</p><h2>MY<br><em>ACCOUNT.</em></h2></div><div class="account-security">ACCOUNT PREVIEW<br><span>Secure login connection ready for backend setup</span></div></div>${profile?`<div class="account-profile"><div class="account-avatar">${(profile.name||"O").slice(0,1).toUpperCase()}</div><div><strong>${escapeHTML(profile.name||"ODO Customer")}</strong><span>${escapeHTML(profile.contact||"")}</span></div><button id="accountLogout">SIGN OUT</button></div>`:`<div class="account-login-panel"><div class="login-hero"><p class="large">Your ODO journey, all in one place.</p><p>Save your details and see the orders placed from this device. <strong>Google / phone OTP login will be activated once the ODO backend is connected.</strong></p></div><form id="accountForm"><label>YOUR NAME<input name="name" required placeholder="Your name"></label><label>EMAIL OR MOBILE<input name="contact" required placeholder="you@email.com or 98XXXXXXXX"></label><button class="checkout-submit" type="submit">CREATE MY ODO ACCOUNT →</button></form><div class="account-auth-note"><button type="button" id="googleComing">CONTINUE WITH GOOGLE</button><button type="button" id="phoneComing">LOGIN WITH PHONE OTP</button><span>Secure production login requires ODO's authentication backend.</span></div></div>`}<div class="account-orders"><div class="account-section-title"><div><p class="eyebrow">ORDER HISTORY</p><h3>MY ORDERS</h3></div><span>${orders.length} ORDER${orders.length===1?"":"S"}</span></div>${orders.length?orders.map(order=>`<div class="account-order"><div><strong>${escapeHTML(order.orderNo)}</strong><span>${new Date(order.createdAt).toLocaleString("en-NP")}</span></div><div><span>${escapeHTML(order.status)}</span><strong>${money(order.total)}</strong></div><button class="order-view" data-order="${escapeHTML(order.orderNo)}">VIEW</button></div>`).join(""):`<div class="empty-account-orders"><p>Your order history will appear here.</p><a href="#streetwear" id="shopFromAccount">SHOP STREETWEAR →</a></div>`}</div><div class="account-foot"><span>Cash on Delivery · All over Nepal</span><span>Order history on this device</span></div></div>`;modal.querySelector(".account-close")?.addEventListener("click",()=>modal.classList.remove("show"));modal.querySelector("#accountForm")?.addEventListener("submit",e=>{e.preventDefault();const data=Object.fromEntries(new FormData(e.currentTarget).entries());setCustomer(data);showToast("ODO account created on this device")});modal.querySelector("#accountLogout")?.addEventListener("click",()=>{localStorage.removeItem("odoCustomer");renderAccount()});modal.querySelector("#googleComing")?.addEventListener("click",()=>showToast("Google login will activate with the ODO backend"));modal.querySelector("#phoneComing")?.addEventListener("click",()=>showToast("Phone OTP will activate with the ODO backend"));modal.querySelector("#shopFromAccount")?.addEventListener("click",()=>modal.classList.remove("show"));modal.querySelectorAll(".order-view").forEach(btn=>btn.addEventListener("click",()=>showOrderDetail(btn.dataset.order)))}
+function showOrderDetail(orderNo){const order=getOrders().find(o=>o.orderNo===orderNo);if(!order)return;const detail=document.createElement("div");detail.className="account-detail-toast";detail.innerHTML=`<strong>${escapeHTML(order.orderNo)}</strong><span>${escapeHTML(order.status)}</span><p>${order.items.map(i=>`${escapeHTML(i.name)} · ${escapeHTML(i.size)} × ${i.qty}`).join("<br>")}</p><strong>${money(order.total)} · COD</strong>`;document.body.appendChild(detail);setTimeout(()=>detail.remove(),5000)}
+function escapeHTML(value){return String(value||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
+function mountAccountLauncher(){if($("#odoAccountLauncher"))return;const nav=document.querySelector(".nav");if(!nav)return;const b=document.createElement("button");b.id="odoAccountLauncher";b.className="account-launcher";b.innerHTML=`<span class="account-dot">◉</span><span>MY ACCOUNT</span>`;b.addEventListener("click",openAccount);nav.insertBefore(b,nav.querySelector(".cart-link"))}
 
-function renderCart() {
-  const container = $("#cartItems");
-  const count = cart.reduce((sum, item) => sum + item.qty, 0);
-  const total = cart.reduce((sum, item) => sum + item.qty * PRICE, 0);
-  $("#cartCount").textContent = count;
-  $("#cartTotal").textContent = money(total);
+function addBrandLeadership(){const contact=$("#contact");if(!contact||$("#odo-story"))return;const section=document.createElement("section");section.id="odo-story";section.className="section odo-story reveal visible";section.innerHTML=`<div class="section-top"><div><p class="eyebrow">05 / THE NEXT CHAPTER</p><h2>BEHIND<br><em>ODO.</em></h2></div><p class="section-intro">ODO Fashion is the first fashion expression of GREATODOUNIVERSE — built today with a vision for tomorrow.</p></div><div class="odo-story-grid"><div class="nita-frame"><div class="nita-placeholder">NK</div><span>PORTRAIT / COMING SOON</span></div><div class="nita-copy"><p class="eyebrow">NITA KUNWAR</p><h3>A NEW PERSPECTIVE<br>BEHIND THE NEXT CHAPTER.</h3><p>ODO is being shaped with curiosity, energy and a belief that fashion can carry an idea — not just a logo.</p><p>Nita Kunwar is part of the future story of ODO Fashion. As the brand grows, this space will evolve with her journey and the role she takes within ODO.</p><p class="story-note">THE STORY IS ONLY BEGINNING.</p></div></div><div class="universe-links"><div><p class="eyebrow">GREATODOUNIVERSE</p><h3>EXPLORE THE<br>UNIVERSE.</h3></div><div class="social-buttons"><a href="https://www.instagram.com/greatodouniverse/" target="_blank" rel="noopener">INSTAGRAM ↗</a><a href="https://www.youtube.com/@GreatODOUniverse" target="_blank" rel="noopener">YOUTUBE ↗</a><a href="https://www.youtube.com/@omsondeoson" target="_blank" rel="noopener">YOUTUBE / ODO ↗</a></div></div>`;contact.parentNode.insertBefore(section,contact)}
 
-  if (!cart.length) {
-    container.innerHTML = '<p class="empty-cart">Your cart is empty.<br>Choose a piece from the first drop.</p>';
-    return;
-  }
+if("IntersectionObserver" in window){const revealObserver=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add("visible")})},{threshold:.12});document.querySelectorAll(".reveal").forEach(el=>revealObserver.observe(el))}
+addBrandLeadership();mountAccountLauncher();renderCart();
 
-  container.innerHTML = cart.map((item, index) => `
-    <div class="cart-item">
-      <div>
-        <div class="cart-item-name">${item.name}</div>
-        <div class="cart-item-meta">SIZE ${item.size} · ${money(PRICE)} each</div>
-        <div class="qty-controls">
-          <button data-action="minus" data-index="${index}">−</button>
-          <strong>${item.qty}</strong>
-          <button data-action="plus" data-index="${index}">+</button>
-          <button class="remove-item" data-action="remove" data-index="${index}">REMOVE</button>
-        </div>
-      </div>
-      <div class="cart-item-price">${money(item.qty * PRICE)}</div>
-    </div>
-  `).join("");
-}
-
-function openCart() {
-  document.body.classList.add("cart-open");
-  $("#cartPanel").setAttribute("aria-hidden", "false");
-}
-
-function closeCart() {
-  document.body.classList.remove("cart-open");
-  $("#cartPanel").setAttribute("aria-hidden", "true");
-}
-
-function addToCart(button) {
-  const product = button.closest(".product");
-  const size = product.querySelector(".size-select").value;
-  const name = button.dataset.name;
-  const existing = cart.find(item => item.name === name && item.size === size);
-  if (existing) existing.qty += 1;
-  else cart.push({ name, size, qty: 1 });
-  saveCart();
-  openCart();
-  showToast(`${name} — size ${size} added`);
-}
-
-$("#cartOpen").addEventListener("click", openCart);
-$("#cartClose").addEventListener("click", closeCart);
-$("#cartOverlay").addEventListener("click", closeCart);
-
-document.querySelectorAll(".add-btn").forEach(button => {
-  button.addEventListener("click", () => addToCart(button));
-});
-
-$("#cartItems").addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-action]");
-  if (!button) return;
-  const index = Number(button.dataset.index);
-  const action = button.dataset.action;
-  if (action === "plus") cart[index].qty += 1;
-  if (action === "minus") cart[index].qty -= 1;
-  if (action === "remove" || cart[index]?.qty <= 0) cart.splice(index, 1);
-  saveCart();
-});
-
-function openCODCheckout() {
-  if (!cart.length) {
-    showToast("Your cart is empty");
-    return;
-  }
-  let modal = document.getElementById("odoCheckoutModal");
-  if (!modal) {
-    modal = document.createElement("div");
-    modal.id = "odoCheckoutModal";
-    modal.className = "checkout-modal";
-    modal.innerHTML = `
-      <div class="checkout-card">
-        <button type="button" class="close-btn checkout-close" aria-label="Close">×</button>
-        <p class="eyebrow">ODO FASHION / CHECKOUT</p>
-        <h2>PLACE YOUR<br><em>ORDER.</em></h2>
-        <p class="checkout-intro">Cash on Delivery · All over Nepal. No online payment required.</p>
-        <div class="checkout-summary" id="odoCheckoutSummary"></div>
-        <form id="odoCheckoutForm">
-          <label>Full Name<input required name="name" autocomplete="name" placeholder="Your full name"></label>
-          <label>Phone Number<input required name="phone" type="tel" autocomplete="tel" placeholder="98XXXXXXXX"></label>
-          <label>Province / District / City<input required name="location" placeholder="Kathmandu, Lalitpur, Pokhara…"></label>
-          <label>Full Delivery Address<textarea required name="address" rows="3" placeholder="Tole, street, house / landmark"></textarea></label>
-          <label>Order Note <span style="text-transform:none;letter-spacing:0;color:#666">(optional)</span><textarea name="note" rows="2" placeholder="Any delivery note?"></textarea></label>
-          <button class="checkout-submit" type="submit">CONFIRM COD ORDER →</button>
-        </form>
-        <p class="cart-note">Your order is prepared here on the website. After confirmation, ODO sends the order details to customer care so the team can confirm stock and delivery.</p>
-      </div>`;
-    document.body.appendChild(modal);
-    modal.querySelector(".checkout-close").addEventListener("click", () => modal.classList.remove("show"));
-    modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("show"); });
-    modal.querySelector("#odoCheckoutForm").addEventListener("submit", submitCODOrder);
-  }
-
-  const total = cart.reduce((sum, item) => sum + item.qty * PRICE, 0);
-  modal.querySelector("#odoCheckoutSummary").innerHTML = cart.map(item => `<div class="checkout-summary-row"><span>${item.name} · ${item.size} × ${item.qty}</span><strong>${money(item.qty * PRICE)}</strong></div>`).join("") + `<div class="checkout-summary-total"><span>TOTAL · CASH ON DELIVERY</span><strong>${money(total)}</strong></div>`;
-  modal.classList.add("show");
-  modal.querySelector('input[name="name"]').focus();
-}
-
-function submitCODOrder(event) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const data = Object.fromEntries(new FormData(form).entries());
-  const total = cart.reduce((sum, item) => sum + item.qty * PRICE, 0);
-  const orderLines = cart.map((item, i) => `${i + 1}. ${item.name} — Size ${item.size} × ${item.qty} = ${money(item.qty * PRICE)}`);
-  const message = [
-    "Hi ODO Fashion! 👋",
-    "NEW WEBSITE COD ORDER",
-    "",
-    ...orderLines,
-    "",
-    `TOTAL: ${money(total)}`,
-    "PAYMENT: Cash on Delivery",
-    "",
-    `CUSTOMER: ${data.name}`,
-    `PHONE: ${data.phone}`,
-    `LOCATION: ${data.location}`,
-    `ADDRESS: ${data.address}`,
-    data.note ? `NOTE: ${data.note}` : ""
-  ].filter(Boolean).join("\n");
-
-  localStorage.setItem("odoLastOrder", JSON.stringify({ ...data, items: cart, total, createdAt: new Date().toISOString() }));
-  form.innerHTML = `<div class="order-success"><p class="eyebrow">ORDER READY</p><h3>THANK YOU, ${String(data.name).split(" ")[0].toUpperCase()}.</h3><p>Your COD order has been prepared successfully. ODO customer care will confirm availability and delivery.</p><a class="checkout-submit" href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}" target="_blank" rel="noopener">SEND ORDER TO ODO →</a><p class="cart-note">If the first WhatsApp line is busy, customer care can also be reached at +977 9768479483.</p></div>`;
-  showToast("Order details ready");
-}
-
-// The old WhatsApp-order button is now the website checkout button.
-// Capture phase prevents the legacy click handler from opening WhatsApp before checkout.
-const legacyOrderButton = document.querySelector("#whatsappOrder");
-if (legacyOrderButton) {
-  legacyOrderButton.textContent = "CHECKOUT — CASH ON DELIVERY";
-  legacyOrderButton.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    openCODCheckout();
-  }, true);
-}
-
-// Secondary customer-care WhatsApp contact.
-const supportSection = document.querySelector("#support");
-if (supportSection && !document.querySelector("#odoSecondWhatsapp")) {
-  const card = document.createElement("div");
-  card.id = "odoSecondWhatsapp";
-  card.className = "support-card";
-  card.innerHTML = `<span class="support-icon">04</span><h3>WHATSAPP SUPPORT 02</h3><p>Alternative customer-care line for orders, sizing and delivery help.</p><a class="support-button" href="https://wa.me/${WHATSAPP_NUMBER_2}?text=${encodeURIComponent("Hi ODO Fashion! I need customer support.")}" target="_blank" rel="noopener">CHAT ON WHATSAPP →</a>`;
-  supportSection.querySelector(".support-grid")?.appendChild(card);
-}
-
-// Future leadership / brand story section.
-function addBrandLeadership() {
-  const contact = document.querySelector("#contact");
-  if (!contact || document.querySelector("#odo-story")) return;
-  const section = document.createElement("section");
-  section.id = "odo-story";
-  section.className = "section odo-story reveal visible";
-  section.innerHTML = `
-    <div class="section-top">
-      <div><p class="eyebrow">05 / THE NEXT CHAPTER</p><h2>BEHIND<br><em>ODO.</em></h2></div>
-      <p class="section-intro">ODO Fashion is the first fashion expression of GREATODOUNIVERSE — built today with a vision for tomorrow.</p>
-    </div>
-    <div class="odo-story-grid">
-      <div class="nita-frame"><div class="nita-placeholder">NK</div><span>PORTRAIT / COMING SOON</span></div>
-      <div class="nita-copy"><p class="eyebrow">NITA KUNWAR</p><h3>A NEW PERSPECTIVE<br>BEHIND THE NEXT CHAPTER.</h3><p>ODO is being shaped with curiosity, energy and a belief that fashion can carry an idea — not just a logo.</p><p>Nita Kunwar is part of the future story of ODO Fashion. As the brand grows, this space will evolve with her journey and the role she takes within ODO.</p><p class="story-note">THE STORY IS ONLY BEGINNING.</p></div>
-    </div>
-    <div class="universe-links"><div><p class="eyebrow">GREATODOUNIVERSE</p><h3>EXPLORE THE<br>UNIVERSE.</h3></div><div class="social-buttons"><a href="https://www.instagram.com/greatodouniverse/" target="_blank" rel="noopener">INSTAGRAM ↗</a><a href="https://www.youtube.com/@GreatODOUniverse" target="_blank" rel="noopener">YOUTUBE ↗</a><a href="https://www.youtube.com/@omsondeoson" target="_blank" rel="noopener">YOUTUBE / ODO ↗</a></div></div>`;
-  contact.parentNode.insertBefore(section, contact);
-}
-
-if ("IntersectionObserver" in window) {
-  const revealObserver = new IntersectionObserver((entries) => { entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add("visible"); }); }, { threshold: 0.12 });
-  document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
-}
-
-addBrandLeadership();
-renderCart();
-
-// ODO_AI_ASSISTANT_V1 — private, keyless customer assistant for GitHub Pages.
-(function initODOAssistant(){
-  const existing=document.querySelector('.odo-ai-launcher');
-  if(existing) return;
-  const root=document.createElement('div');
-  root.innerHTML=`
-    <button class="odo-ai-launcher" id="odoAiLauncher" aria-label="Open ODO AI Customer Assistant"><img src="owl-logo.svg" alt="ODO owl"></button>
-    <section class="odo-ai-window" id="odoAiWindow" aria-label="ODO AI Customer Assistant">
-      <div class="odo-ai-head"><div class="odo-ai-brand"><img src="owl-logo.svg" alt="ODO"><div><strong>ODO AI ASSISTANT</strong><small>Customer care · See Beyond</small></div></div><button class="odo-ai-close" id="odoAiClose" aria-label="Close">×</button></div>
-      <div class="odo-ai-messages" id="odoAiMessages"></div>
-      <div class="odo-ai-quick"><button data-q="What products do you have?">PRODUCTS</button><button data-q="How much are the clothes?">PRICE</button><button data-q="Do you deliver all over Nepal?">DELIVERY</button><button data-q="What sizes are available?">SIZES</button></div>
-      <div class="odo-ai-form"><input class="odo-ai-input" id="odoAiInput" placeholder="Ask ODO anything…" autocomplete="off"><button class="odo-ai-send" id="odoAiSend">→</button></div>
-      <div class="odo-ai-note">For orders or personal help, you can also chat with ODO on WhatsApp.</div>
-    </section>`;
-  document.body.appendChild(root);
-  const win=document.getElementById('odoAiWindow'), launcher=document.getElementById('odoAiLauncher'), close=document.getElementById('odoAiClose'), messages=document.getElementById('odoAiMessages'), input=document.getElementById('odoAiInput'), send=document.getElementById('odoAiSend');
-  const wa=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi ODO Fashion! I need customer support.')}`;
-  function addMessage(text,who='bot',html=false){const el=document.createElement('div');el.className=`odo-ai-msg ${who}`;if(html)el.innerHTML=text;else el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;}
-  function answer(q){
-    const s=q.toLowerCase().trim();
-    if(!s) return 'Please type a question and I will help you.';
-    if(/hello|hi|hey|namaste|namaskar|hola/.test(s)) return 'Namaste 👋 Welcome to ODO Fashion. I can help with products, prices, sizes, delivery, COD, orders and the ODO story.';
-    if(/price|cost|how much|कति|पैसा/.test(s)) return 'Every first-drop Streetwear piece is NPR 2,500. Cash on Delivery is available across Nepal.';
-    if(/product|shirt|t.?shirt|tee|hoodie|kapada|clothes|collection|drop/.test(s)) return 'The first ODO Streetwear drop currently includes Laija Mero Maya, Sapana Energy, Kathmandu, Zero to Hero Hoodie and Budi Aajhai. Each is NPR 2,500.';
-    if(/size|sizing|fit|xl|xxl|large|medium/.test(s)) return 'Available sizes are S, M, L, XL and XXL. If you want help choosing a size, tell me your usual T-shirt size and I can guide you.';
-    if(/deliver|delivery|shipping|nepal|kathmandu|location/.test(s)) return 'Yes — ODO Fashion offers Cash on Delivery all over Nepal.';
-    if(/cash|cod|payment|esewa|khalti|fonepay|bank|online/.test(s)) return 'Cash on Delivery is available all over Nepal. Online payment is coming soon.';
-    if(/order|buy|purchase|cart|checkout/.test(s)) return 'Choose your size, tap ADD TO CART, open your CART, then tap CHECKOUT — CASH ON DELIVERY. You can enter your name, phone and full delivery address right on the website.';
-    if(/whatsapp|support|help|contact|customer/.test(s)) return `For personal customer support, chat with ODO on WhatsApp: <a href="${wa}" target="_blank" rel="noopener" style="color:#e5c982">OPEN WHATSAPP →</a>`;
-    if(/nita|kunwar|ceo|owner|sister/.test(s)) return 'Nita Kunwar is closely connected to the future of ODO Fashion and represents the next chapter of the brand. The website intentionally describes her future role without calling her CEO yet.';
-    if(/greatodo|universe|parent|company/.test(s)) return 'ODO Fashion is a fashion expression under GREATODOUNIVERSE — the larger universe behind the brand, with a long-term vision for multiple ideas and companies.';
-    if(/about|what is odo|brand|meaning|owl|logo|see beyond/.test(s)) return 'ODO Fashion is premium + streetwear from Nepal. The owl represents wisdom, awareness and seeing what others may overlook. The idea is simple: SEE BEYOND.';
-    if(/lookbook/.test(s)) return 'The ODO Lookbook presents the first drop with full product photography, Nepali typography and a premium black-and-cream visual direction.';
-    return 'I can help with ODO products, NPR 2,500 pricing, sizes, Cash on Delivery, delivery across Nepal, website checkout, WhatsApp support, Nita Kunwar, GREATODOUNIVERSE and the ODO story. What would you like to know?';
-  }
-  function ask(q){if(!q.trim())return;addMessage(q,'user');setTimeout(()=>addMessage(answer(q),'bot',true),260);input.value='';}
-  launcher.addEventListener('click',()=>{win.classList.add('open');input.focus();if(!messages.children.length)addMessage('Welcome to ODO Fashion 👁️\nI am the ODO customer assistant. Ask me about products, prices, sizes, delivery or orders.');});
-  close.addEventListener('click',()=>win.classList.remove('open'));
-  send.addEventListener('click',()=>ask(input.value));
-  input.addEventListener('keydown',e=>{if(e.key==='Enter')ask(input.value)});
-  document.querySelectorAll('.odo-ai-quick button').forEach(b=>b.addEventListener('click',()=>ask(b.dataset.q)));
-})();
+(function initODOAssistant(){const existing=document.querySelector('.odo-ai-launcher');if(existing)return;const root=document.createElement('div');root.innerHTML=`<button class="odo-ai-launcher" id="odoAiLauncher" aria-label="Open ODO AI Customer Assistant"><img src="owl-logo.svg" alt="ODO owl"></button><section class="odo-ai-window" id="odoAiWindow" aria-label="ODO AI Customer Assistant"><div class="odo-ai-head"><div class="odo-ai-brand"><img src="owl-logo.svg" alt="ODO"><div><strong>ODO AI ASSISTANT</strong><small>Customer care · See Beyond</small></div></div><button class="odo-ai-close" id="odoAiClose" aria-label="Close">×</button></div><div class="odo-ai-messages" id="odoAiMessages"></div><div class="odo-ai-quick"><button data-q="What products do you have?">PRODUCTS</button><button data-q="How much are the clothes?">PRICE</button><button data-q="Do you deliver all over Nepal?">DELIVERY</button><button data-q="What sizes are available?">SIZES</button></div><div class="odo-ai-form"><input class="odo-ai-input" id="odoAiInput" placeholder="Ask ODO anything…" autocomplete="off"><button class="odo-ai-send" id="odoAiSend">→</button></div><div class="odo-ai-note">For orders or personal help, you can also chat with ODO on WhatsApp.</div></section>`;document.body.appendChild(root);const win=$("#odoAiWindow"),launcher=$("#odoAiLauncher"),close=$("#odoAiClose"),messages=$("#odoAiMessages"),input=$("#odoAiInput"),send=$("#odoAiSend");const wa=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi ODO Fashion! I need customer support.')}`;function addMessage(text,who='bot',html=false){const el=document.createElement('div');el.className=`odo-ai-msg ${who}`;if(html)el.innerHTML=text;else el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight}function answer(q){const s=q.toLowerCase().trim();if(!s)return'Please type a question and I will help you.';if(/hello|hi|hey|namaste|namaskar/.test(s))return'Namaste 👋 Welcome to ODO Fashion. I can help with products, prices, sizes, delivery, COD, orders, accounts and the ODO story.';if(/price|cost|how much|कति|पैसा/.test(s))return'Every first-drop Streetwear piece is NPR 2,500. Cash on Delivery is available across Nepal.';if(/product|shirt|t.?shirt|tee|hoodie|kapada|clothes|collection|drop/.test(s))return'The first ODO Streetwear drop currently includes Laija Mero Maya, Sapana Energy, Kathmandu, Zero to Hero Hoodie and Budi Aajhai. Each is NPR 2,500.';if(/size|sizing|fit|xl|xxl|large|medium/.test(s))return'Available sizes are S, M, L, XL and XXL.';if(/deliver|delivery|shipping|nepal|kathmandu|location/.test(s))return'Yes — ODO Fashion offers Cash on Delivery all over Nepal.';if(/cash|cod|payment|esewa|khalti|fonepay|bank|online/.test(s))return'Cash on Delivery is available all over Nepal. Online payment is coming soon.';if(/account|login|sign|history|order history/.test(s))return'Open MY ACCOUNT to see your ODO order history. Secure Google and phone OTP login will be activated after the ODO backend is connected.';if(/order|buy|purchase|cart/.test(s))return`You can add products to cart and check out with Cash on Delivery. For direct help: <a href="${wa}" target="_blank" rel="noopener" style="color:#e5c982">CHAT ON WHATSAPP →</a>`;if(/whatsapp|support|help|contact|customer/.test(s))return`For personal customer support, chat with ODO on WhatsApp: <a href="${wa}" target="_blank" rel="noopener" style="color:#e5c982">OPEN WHATSAPP →</a>`;if(/nita|kunwar|ceo|owner|sister/.test(s))return'Nita Kunwar represents the next chapter of ODO Fashion. The website intentionally describes her future role without calling her CEO yet.';if(/greatodo|universe|parent|company/.test(s))return'ODO Fashion is a fashion expression under GREATODOUNIVERSE — the larger universe behind the brand.';if(/about|what is odo|brand|meaning|owl|logo|see beyond/.test(s))return'ODO Fashion is premium + streetwear from Nepal. The owl represents wisdom, awareness and seeing what others may overlook. SEE BEYOND.';if(/lookbook/.test(s))return'The ODO Lookbook presents the first drop with full product photography and a premium black-and-cream direction.';return'I can help with ODO products, pricing, sizes, Cash on Delivery, delivery across Nepal, orders, My Account, Nita Kunwar, GREATODOUNIVERSE and the ODO story.'}function ask(q){if(!q.trim())return;addMessage(q,'user');setTimeout(()=>addMessage(answer(q),'bot',true),260);input.value=''}launcher.addEventListener('click',()=>{win.classList.add('open');input.focus();if(!messages.children.length)addMessage('Welcome to ODO Fashion 👁️\nI can help with products, prices, sizes, delivery, orders and My Account.')});close.addEventListener('click',()=>win.classList.remove('open'));send.addEventListener('click',()=>ask(input.value));input.addEventListener('keydown',e=>{if(e.key==='Enter')ask(input.value)});document.querySelectorAll('.odo-ai-quick button').forEach(b=>b.addEventListener('click',()=>ask(b.dataset.q)))})();
