@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>ODO FASHION / ADMIN</title><link rel="stylesheet" href="style.css"></head>
+<body class="odo-admin-body">
+<div id="odoAdminApp" class="odo-admin-app">
+  <header class="odo-admin-head"><div><p class="eyebrow">GREATODOUNIVERSE / ODO FASHION</p><h1>ADMIN <em>DASHBOARD.</em></h1></div><div><button id="adminRefresh" class="checkout-submit admin-btn">REFRESH</button><button id="adminSignout" class="odo-signout admin-btn">SIGN OUT</button></div></header>
+  <main class="odo-admin-main">
+    <div id="adminMessage" class="odo-message">Checking admin access…</div>
+    <section id="adminStats" class="odo-admin-stats" hidden></section>
+    <section id="adminOrdersSection" hidden>
+      <div class="odo-admin-title"><div><p class="eyebrow">LIVE STORE</p><h2>ORDERS.</h2></div><p>Customer orders saved directly from the ODO website.</p></div>
+      <div class="odo-admin-table-wrap"><table class="odo-admin-table"><thead><tr><th>ORDER</th><th>CUSTOMER</th><th>PRODUCTS</th><th>TOTAL</th><th>PAYMENT</th><th>STATUS</th><th>DATE</th></tr></thead><tbody id="adminOrders"></tbody></table></div>
+    </section>
+    <section id="adminCustomersSection" hidden>
+      <div class="odo-admin-title"><div><p class="eyebrow">CUSTOMERS</p><h2>PEOPLE.</h2></div><p>Registered ODO accounts and order counts.</p></div>
+      <div class="odo-admin-table-wrap"><table class="odo-admin-table"><thead><tr><th>CUSTOMER</th><th>EMAIL</th><th>PHONE</th><th>ORDERS</th><th>JOINED</th></tr></thead><tbody id="adminCustomers"></tbody></table></div>
+    </section>
+  </main>
+</div>
+<script type="module" src="admin.js"></script>
+</body></html>
