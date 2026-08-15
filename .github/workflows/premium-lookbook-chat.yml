@@ -3,7 +3,8 @@ name: ODO Premium Lookbook + Customer Assistant
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -13,93 +14,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Apply premium Lookbook and customer assistant
-        shell: bash
+      - name: Apply ODO upgrades
         run: |
           set -e
-
           if ! grep -q 'ODO_PREMIUM_LOOKBOOK_V2' style.css; then
-            cat >> style.css <<'EOF'
-
-/* ODO_PREMIUM_LOOKBOOK_V2 */
-.look-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:stretch}
-.look-card{min-height:0!important;aspect-ratio:1/1!important;padding:0!important;display:block!important;background:#090909!important;border:1px solid rgba(200,165,96,.22)!important;position:relative;overflow:hidden!important;box-shadow:0 22px 70px rgba(0,0,0,.38);isolation:isolate}
-.look-card img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;object-fit:contain!important;object-position:center!important;padding:14px!important;z-index:0!important;background:#0b0b0a!important;transition:transform .7s cubic-bezier(.2,.7,.2,1),filter .4s!important}
-.look-card:after{content:"";position:absolute!important;inset:0!important;background:linear-gradient(180deg,rgba(0,0,0,0) 50%,rgba(0,0,0,.72) 100%)!important;z-index:1!important;pointer-events:none!important}
-.look-card:hover{transform:translateY(-7px)!important;border-color:rgba(200,165,96,.6)!important;box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 0 1px rgba(200,165,96,.08)!important}
-.look-card:hover img{transform:scale(1.018)!important;filter:contrast(1.04) saturate(.98)!important}
-.look-card span{position:absolute!important;left:25px!important;bottom:23px!important;z-index:2!important;font-size:clamp(1.35rem,2.4vw,2.2rem)!important;line-height:.92!important;text-shadow:0 3px 24px rgba(0,0,0,.9)!important}
-.look-three{color:var(--cream)!important}
-@media(max-width:1050px){.look-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:760px){.look-grid{grid-template-columns:1fr}.look-card{aspect-ratio:1/1!important}}
-
-/* ODO_AI_ASSISTANT_V1 */
-.odo-ai-launcher{position:fixed;right:24px;bottom:24px;z-index:90;width:64px;height:64px;border-radius:50%;border:1px solid rgba(200,165,96,.65);background:#090908;color:#f5f1e8;box-shadow:0 16px 50px rgba(0,0,0,.55),0 0 0 6px rgba(200,165,96,.07);display:grid;place-items:center;cursor:pointer;transition:.3s}
-.odo-ai-launcher:hover{transform:translateY(-4px) scale(1.03);border-color:#e5c982;box-shadow:0 22px 60px rgba(0,0,0,.65),0 0 0 8px rgba(200,165,96,.08)}
-.odo-ai-launcher img{width:38px;height:38px;object-fit:contain}
-.odo-ai-window{position:fixed;right:24px;bottom:100px;z-index:91;width:min(390px,calc(100vw - 30px));height:min(590px,calc(100vh - 130px));display:flex;flex-direction:column;background:rgba(10,10,9,.97);border:1px solid rgba(200,165,96,.36);box-shadow:0 35px 110px rgba(0,0,0,.72);backdrop-filter:blur(20px);opacity:0;visibility:hidden;transform:translateY(16px) scale(.98);transition:.25s}
-.odo-ai-window.open{opacity:1;visibility:visible;transform:none}
-.odo-ai-head{display:flex;align-items:center;justify-content:space-between;padding:17px 18px;border-bottom:1px solid rgba(245,241,232,.1)}
-.odo-ai-brand{display:flex;align-items:center;gap:11px}.odo-ai-brand img{width:35px;height:35px;object-fit:contain}.odo-ai-brand strong{display:block;font-family:'Space Grotesk',sans-serif;letter-spacing:.02em}.odo-ai-brand small{display:block;color:#77736c;font-size:.58rem;margin-top:2px}.odo-ai-close{border:0;background:none;color:#aaa69d;font-size:1.5rem;cursor:pointer}
-.odo-ai-messages{flex:1;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px}.odo-ai-msg{max-width:88%;padding:11px 13px;font-size:.72rem;line-height:1.6;border:1px solid rgba(245,241,232,.09)}.odo-ai-msg.bot{align-self:flex-start;background:#121211;color:#ddd8cf;border-radius:2px 13px 13px 13px}.odo-ai-msg.user{align-self:flex-end;background:#f5f1e8;color:#090909;border-radius:13px 2px 13px 13px}.odo-ai-quick{display:flex;gap:7px;overflow-x:auto;padding:0 18px 11px;scrollbar-width:none}.odo-ai-quick::-webkit-scrollbar{display:none}.odo-ai-quick button{white-space:nowrap;background:#11110f;color:#aaa69d;border:1px solid rgba(200,165,96,.22);padding:8px 10px;font-size:.54rem;letter-spacing:.07em;cursor:pointer}.odo-ai-quick button:hover{border-color:#c8a560;color:#f5f1e8}.odo-ai-form{display:flex;gap:8px;padding:13px;border-top:1px solid rgba(245,241,232,.1)}.odo-ai-input{flex:1;min-width:0;background:#070707;color:#f5f1e8;border:1px solid #35322c;padding:11px 12px;outline:none;font-size:.68rem}.odo-ai-input:focus{border-color:#c8a560}.odo-ai-send{width:46px;border:1px solid #c8a560;background:#c8a560;color:#090909;font-weight:900;cursor:pointer}.odo-ai-note{text-align:center;color:#5d5a54;font-size:.48rem;padding:0 13px 10px;letter-spacing:.03em}
-@media(max-width:600px){.odo-ai-launcher{right:16px;bottom:16px;width:58px;height:58px}.odo-ai-window{right:12px;bottom:86px;width:calc(100vw - 24px);height:min(600px,calc(100vh - 105px))}}
-EOF
+            cat .github/odo-premium.css >> style.css
           fi
-
           if ! grep -q 'ODO_AI_ASSISTANT_V1' script.js; then
-            cat >> script.js <<'EOF'
-
-// ODO_AI_ASSISTANT_V1 — private, keyless customer assistant for GitHub Pages.
-(function initODOAssistant(){
-  const existing=document.querySelector('.odo-ai-launcher');
-  if(existing) return;
-  const root=document.createElement('div');
-  root.innerHTML=`
-    <button class="odo-ai-launcher" id="odoAiLauncher" aria-label="Open ODO AI Customer Assistant"><img src="owl-logo.svg" alt="ODO owl"></button>
-    <section class="odo-ai-window" id="odoAiWindow" aria-label="ODO AI Customer Assistant">
-      <div class="odo-ai-head"><div class="odo-ai-brand"><img src="owl-logo.svg" alt="ODO"><div><strong>ODO AI ASSISTANT</strong><small>Customer care · See Beyond</small></div></div><button class="odo-ai-close" id="odoAiClose" aria-label="Close">×</button></div>
-      <div class="odo-ai-messages" id="odoAiMessages"></div>
-      <div class="odo-ai-quick"><button data-q="What products do you have?">PRODUCTS</button><button data-q="How much are the clothes?">PRICE</button><button data-q="Do you deliver all over Nepal?">DELIVERY</button><button data-q="What sizes are available?">SIZES</button></div>
-      <div class="odo-ai-form"><input class="odo-ai-input" id="odoAiInput" placeholder="Ask ODO anything…" autocomplete="off"><button class="odo-ai-send" id="odoAiSend">→</button></div>
-      <div class="odo-ai-note">For orders or personal help, you can also chat with ODO on WhatsApp.</div>
-    </section>`;
-  document.body.appendChild(root);
-  const win=document.getElementById('odoAiWindow'), launcher=document.getElementById('odoAiLauncher'), close=document.getElementById('odoAiClose'), messages=document.getElementById('odoAiMessages'), input=document.getElementById('odoAiInput'), send=document.getElementById('odoAiSend');
-  const wa=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi ODO Fashion! I need customer support.')}`;
-  function addMessage(text,who='bot',html=false){const el=document.createElement('div');el.className=`odo-ai-msg ${who}`;if(html)el.innerHTML=text;else el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;}
-  function answer(q){
-    const s=q.toLowerCase().trim();
-    if(!s) return 'Please type a question and I will help you.';
-    if(/hello|hi|hey|namaste|namaskar|hola/.test(s)) return 'Namaste 👋 Welcome to ODO Fashion. I can help with products, prices, sizes, delivery, COD, orders and the ODO story.';
-    if(/price|cost|how much|कति|पैसा|price/.test(s)) return 'Every first-drop Streetwear piece is NPR 2,500. Cash on Delivery is available across Nepal.';
-    if(/product|shirt|t.?shirt|tee|hoodie|kapada|clothes|collection|drop/.test(s)) return 'The first ODO Streetwear drop currently includes Laija Mero Maya, Sapana Energy, Kathmandu, Zero to Hero Hoodie and Budi Aajhai. Each is NPR 2,500.';
-    if(/size|sizing|fit|xl|xxl|large|medium/.test(s)) return 'Available sizes are S, M, L, XL and XXL. If you want help choosing a size, tell me your usual T-shirt size and I can guide you.';
-    if(/deliver|delivery|shipping|nepal|kathmandu|location/.test(s)) return 'Yes — ODO Fashion offers Cash on Delivery all over Nepal.';
-    if(/cash|cod|payment|esewa|khalti|fonepay|bank|online/.test(s)) return 'Cash on Delivery is available all over Nepal. Online payment is coming soon.';
-    if(/order|buy|purchase|cart/.test(s)) return `You can add a product to the cart and place the order through WhatsApp. For direct help: <a href="${wa}" target="_blank" rel="noopener" style="color:#e5c982">CHAT ON WHATSAPP →</a>`;
-    if(/whatsapp|support|help|contact|customer/.test(s)) return `For personal customer support, chat with ODO on WhatsApp: <a href="${wa}" target="_blank" rel="noopener" style="color:#e5c982">OPEN WHATSAPP →</a>`;
-    if(/nita|kunwar|ceo|owner|sister/.test(s)) return 'Nita Kunwar is closely connected to the future of ODO Fashion and represents the next chapter of the brand. The website intentionally describes her future role without calling her CEO yet.';
-    if(/greatodo|universe|parent|company/.test(s)) return 'ODO Fashion is a fashion expression under GREATODOUNIVERSE — the larger universe behind the brand, with a long-term vision for multiple ideas and companies.';
-    if(/about|what is odo|brand|meaning|owl|logo|see beyond/.test(s)) return 'ODO Fashion is premium + streetwear from Nepal. The owl represents wisdom, awareness and seeing what others may overlook. The idea is simple: SEE BEYOND.';
-    if(/lookbook/.test(s)) return 'The ODO Lookbook presents the first drop with full product photography, Nepali typography and a premium black-and-cream visual direction.';
-    return 'I can help with ODO products, NPR 2,500 pricing, sizes, Cash on Delivery, delivery across Nepal, orders, WhatsApp support, Nita Kunwar, GREATODOUNIVERSE and the ODO story. What would you like to know?';
-  }
-  function ask(q){if(!q.trim())return;addMessage(q,'user');setTimeout(()=>addMessage(answer(q),'bot',true),260);input.value='';}
-  launcher.addEventListener('click',()=>{win.classList.add('open');input.focus();if(!messages.children.length)addMessage('Welcome to ODO Fashion 👁️\nI am the ODO customer assistant. Ask me about products, prices, sizes, delivery or orders.');});
-  close.addEventListener('click',()=>win.classList.remove('open'));
-  send.addEventListener('click',()=>ask(input.value));
-  input.addEventListener('keydown',e=>{if(e.key==='Enter')ask(input.value)});
-  document.querySelectorAll('.odo-ai-quick button').forEach(b=>b.addEventListener('click',()=>ask(b.dataset.q)));
-})();
-EOF
+            cat .github/odo-assistant.js >> script.js
           fi
-
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add style.css script.js
           if git diff --cached --quiet; then
-            echo 'No changes needed'
+            echo 'ODO upgrades already applied'
             exit 0
           fi
           git commit -m 'Upgrade Lookbook and add ODO customer assistant'
