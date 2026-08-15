@@ -1,7 +1,7 @@
-const WHATSAPP_NUMBER = "9779800000000"; // Replace with your real WhatsApp number, country code included.
+const WHATSAPP_NUMBER = "9779845319200";
 
 function order(product) {
-  const message = encodeURIComponent(`Hi ODO Fashion, I'm interested in the ${product}. Please send me details.`);
+  const message = encodeURIComponent(`Hi ODO Fashion, I'm interested in the ${product}. Please send me details about price, sizes and availability.`);
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, "_blank");
 }
 
