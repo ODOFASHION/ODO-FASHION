@@ -114,6 +114,46 @@ $("#whatsappOrder").addEventListener("click", () => {
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
 });
 
+// Future leadership / brand story section.
+// Nita's real portrait can be added later without changing the layout.
+function addBrandLeadership() {
+  const contact = document.querySelector("#contact");
+  if (!contact || document.querySelector("#odo-story")) return;
+  const section = document.createElement("section");
+  section.id = "odo-story";
+  section.className = "section odo-story reveal visible";
+  section.innerHTML = `
+    <div class="section-top">
+      <div>
+        <p class="eyebrow">05 / THE NEXT CHAPTER</p>
+        <h2>BEHIND<br><em>ODO.</em></h2>
+      </div>
+      <p class="section-intro">ODO Fashion is the first fashion expression of GREATODOUNIVERSE — built today with a vision for tomorrow.</p>
+    </div>
+    <div class="odo-story-grid">
+      <div class="nita-frame">
+        <div class="nita-placeholder">NK</div>
+        <span>PORTRAIT / COMING SOON</span>
+      </div>
+      <div class="nita-copy">
+        <p class="eyebrow">NITA KUNWAR</p>
+        <h3>A NEW PERSPECTIVE<br>BEHIND THE NEXT CHAPTER.</h3>
+        <p>ODO is being shaped with curiosity, energy and a belief that fashion can carry an idea — not just a logo.</p>
+        <p>Nita Kunwar is part of the future story of ODO Fashion. As the brand grows, this space will evolve with her journey and the role she takes within ODO.</p>
+        <p class="story-note">THE STORY IS ONLY BEGINNING.</p>
+      </div>
+    </div>
+    <div class="universe-links">
+      <div><p class="eyebrow">GREATODOUNIVERSE</p><h3>EXPLORE THE<br>UNIVERSE.</h3></div>
+      <div class="social-buttons">
+        <a href="https://www.instagram.com/greatodouniverse/" target="_blank" rel="noopener">INSTAGRAM ↗</a>
+        <a href="https://www.youtube.com/@GreatODOUniverse" target="_blank" rel="noopener">YOUTUBE ↗</a>
+        <a href="https://www.youtube.com/@omsondeoson" target="_blank" rel="noopener">YOUTUBE / ODO ↗</a>
+      </div>
+    </div>`;
+  contact.parentNode.insertBefore(section, contact);
+}
+
 if ("IntersectionObserver" in window) {
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add("visible"); });
@@ -121,4 +161,5 @@ if ("IntersectionObserver" in window) {
   document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 }
 
+addBrandLeadership();
 renderCart();
