@@ -1,0 +1,81 @@
+name: ODO order confirmation navigation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  add-order-navigation:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Add order confirmation navigation
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'ODO_ORDER_SUCCESS_NAV_V1' auth.js; then
+            cat >> auth.js <<'EOF'
+
+// ODO_ORDER_SUCCESS_NAV_V1 — clear confirmation + history/back navigation.
+(function(){
+  const style=document.createElement('style');
+  style.textContent=`
+    .odo-order-success-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+    .odo-order-success-actions button{min-height:48px;padding:12px 14px;border:1px solid #c8a560;background:#c8a560;color:#090909;font-weight:900;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+    .odo-order-success-actions .secondary{background:transparent;color:#f5f1e8;border-color:rgba(245,241,232,.2)}
+    .odo-order-success-actions .secondary:hover{border-color:#c8a560;color:#e5c982}
+    .odo-order-confirmed-note{margin-top:14px;padding:13px 14px;border:1px solid rgba(200,165,96,.2);background:#11110f;color:#aaa;font-size:.64rem;line-height:1.6}
+    @media(max-width:560px){.odo-order-success-actions{grid-template-columns:1fr}}
+  `;
+  document.head.appendChild(style);
+  function enhance(){
+    document.querySelectorAll('.checkout-modal').forEach(modal=>{
+      const success=modal.querySelector('.order-success');
+      if(!success || success.dataset.navReady==='1') return;
+      success.dataset.navReady='1';
+      const wa=success.querySelector('a[href*="wa.me"]');
+      const actions=document.createElement('div');
+      actions.className='odo-order-success-actions';
+      const history=document.createElement('button');
+      history.type='button'; history.textContent='MY ORDER HISTORY →';
+      history.onclick=async()=>{
+        modal.classList.remove('show');
+        const account=document.getElementById('odoAccountBtn');
+        if(account) account.click();
+      };
+      const back=document.createElement('button');
+      back.type='button'; back.className='secondary'; back.textContent='← BACK TO SHOP';
+      back.onclick=()=>{
+        modal.classList.remove('show');
+        document.body.classList.remove('cart-open');
+        document.querySelector('#streetwear')?.scrollIntoView({behavior:'smooth',block:'start'});
+      };
+      actions.append(history,back);
+      if(wa) wa.insertAdjacentElement('afterend',actions); else success.appendChild(actions);
+      const note=document.createElement('div');
+      note.className='odo-order-confirmed-note';
+      note.innerHTML='<strong>ORDER SAVED ✓</strong><br>Your order is saved in your ODO account. Check <strong>MY ACCOUNT → MY ORDERS</strong> anytime for its status.';
+      actions.insertAdjacentElement('afterend',note);
+    });
+  }
+  new MutationObserver(enhance).observe(document.body,{childList:true,subtree:true});
+  enhance();
+})();
+EOF
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add auth.js
+          if git diff --cached --quiet; then
+            echo 'Order navigation already present'
+          else
+            git commit -m 'Add order success navigation and history buttons'
+            git push origin HEAD:main
+          fi
