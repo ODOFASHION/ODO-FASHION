@@ -1,3 +1,4 @@
+(function loadODOAccountStyles(){if(!document.querySelector('link[href="account.css"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='account.css';document.head.appendChild(l)}})();
 const WHATSAPP_NUMBER = "9779845319200";
 const WHATSAPP_NUMBER_2 = "9779768479483";
 const PRICE = 2500;
