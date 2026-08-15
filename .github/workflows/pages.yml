@@ -33,6 +33,13 @@ jobs:
           if ! grep -q 'order-fix.js' index.html; then
             sed -i 's#<script type="module" src="auth.js"></script>#<script type="module" src="auth.js"></script><script src="order-fix.js"></script>#' index.html
           fi
+      - name: Clean shared tracking parameters from visible URL
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'url-clean.js' index.html; then
+            sed -i 's#</body>#<script src="url-clean.js"></script></body>#' index.html
+          fi
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
