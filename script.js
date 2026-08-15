@@ -65,6 +65,21 @@ function closeCart() {
   $("#cartPanel").setAttribute("aria-hidden", "true");
 }
 
+function openCheckout() {
+  if (!cart.length) {
+    showToast("Your cart is empty");
+    return;
+  }
+  $("#checkoutModal").classList.add("show");
+  $("#checkoutModal").setAttribute("aria-hidden", "false");
+  $("#customerName").focus();
+}
+
+function closeCheckout() {
+  $("#checkoutModal").classList.remove("show");
+  $("#checkoutModal").setAttribute("aria-hidden", "true");
+}
+
 function addToCart(button) {
   const product = button.closest(".product");
   const size = product.querySelector(".size-select").value;
@@ -82,6 +97,19 @@ function addToCart(button) {
 $("#cartOpen").addEventListener("click", openCart);
 $("#cartClose").addEventListener("click", closeCart);
 $("#cartOverlay").addEventListener("click", closeCart);
+$("#whatsappOrder").addEventListener("click", openCheckout);
+$("#checkoutClose").addEventListener("click", closeCheckout);
+
+$("#checkoutModal").addEventListener("click", (event) => {
+  if (event.target.id === "checkoutModal") closeCheckout();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeCheckout();
+    closeCart();
+  }
+});
 
 document.querySelectorAll(".add-btn").forEach(button => {
   button.addEventListener("click", () => addToCart(button));
@@ -99,14 +127,21 @@ $("#cartItems").addEventListener("click", (event) => {
   saveCart();
 });
 
-$("#whatsappOrder").addEventListener("click", () => {
+$("#checkoutForm").addEventListener("submit", (event) => {
+  event.preventDefault();
   if (!cart.length) {
+    closeCheckout();
     showToast("Your cart is empty");
     return;
   }
 
+  const name = $("#customerName").value.trim();
+  const phone = $("#customerPhone").value.trim();
+  const address = $("#customerAddress").value.trim();
+  const location = $("#customerLocation").value;
   const lines = cart.map((item, i) => `${i + 1}. ${item.name} — Size ${item.size} × ${item.qty} = ${money(item.qty * PRICE)}`);
   const total = cart.reduce((sum, item) => sum + item.qty * PRICE, 0);
+
   const message = [
     "Hi ODO Fashion! 👋",
     "I would like to place an order:",
@@ -115,13 +150,19 @@ $("#whatsappOrder").addEventListener("click", () => {
     "",
     `Total: ${money(total)}`,
     "",
-    "Please confirm availability and delivery/payment details."
+    "CUSTOMER DETAILS",
+    `Name: ${name}`,
+    `Phone: ${phone}`,
+    `Delivery location: ${location}`,
+    `Address: ${address}`,
+    "",
+    "Please confirm availability, delivery charge and payment details."
   ].join("\n");
 
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
+  closeCheckout();
 });
 
-// Reveal product cards as they enter the viewport.
 if ("IntersectionObserver" in window) {
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
