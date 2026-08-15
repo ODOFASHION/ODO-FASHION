@@ -13,22 +13,35 @@ jobs:
   upgrade:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
       - name: Apply ODO upgrades
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
-          if ! grep -q 'ODO_PREMIUM_LOOKBOOK_V2' style.css; then
+          if grep -q 'ODO_PREMIUM_LOOKBOOK_V2' style.css; then
+            echo 'Lookbook CSS already present'
+          else
             cat .github/odo-premium.css >> style.css
           fi
-          if ! grep -q 'ODO_AI_ASSISTANT_V1' script.js; then
+          if grep -q 'ODO_AI_ASSISTANT_V1' script.js; then
+            echo 'Assistant JS already present'
+          else
             cat .github/odo-assistant.js >> script.js
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git status --short
           git add style.css script.js
           if git diff --cached --quiet; then
-            echo 'ODO upgrades already applied'
-            exit 0
+            echo 'No ODO source changes to commit'
+          else
+            git commit -m 'Upgrade Lookbook and add ODO customer assistant'
+            git push origin HEAD:main
           fi
-          git commit -m 'Upgrade Lookbook and add ODO customer assistant'
-          git push
