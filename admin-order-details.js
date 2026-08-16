@@ -1,0 +1,30 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const sb=createClient('https://gqlcxvukyezqpdftjdeo.supabase.co','sb_publishable_ViHQ2SZREPXE_GCrN_zDrw__kXoN9D8');
+const esc=v=>String(v??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const money=v=>`NPR ${Number(v||0).toLocaleString('en-NP')}`;
+const fmt=v=>new Date(v).toLocaleString('en-NP');
+const style=document.createElement('style');style.textContent=`.admin-detail-modal{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;padding:20px}.admin-detail-modal.open{display:flex}.admin-detail-card{width:min(820px,100%);max-height:90vh;overflow:auto;background:#0b0b0a;border:1px solid rgba(200,165,96,.35);padding:30px;position:relative}.admin-detail-close{position:absolute;right:16px;top:8px;background:none;border:0;color:#f5f1e8;font-size:2rem;cursor:pointer}.admin-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}.admin-detail-box{border:1px solid rgba(245,241,232,.09);padding:14px}.admin-detail-box span{display:block;color:#77736c;font-size:.5rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:6px}.admin-detail-box strong,.admin-detail-box div{color:#f5f1e8;font-size:.72rem;line-height:1.6}.admin-order-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.admin-order-actions a,.admin-order-actions button{background:#c8a560;color:#080807;border:0;padding:11px 15px;font-size:.56rem;letter-spacing:.1em;text-decoration:none;cursor:pointer}.admin-order-row-button{background:none;border:1px solid rgba(200,165,96,.35);color:#e5c982;padding:6px 9px;font-size:.5rem;cursor:pointer}@media(max-width:600px){.admin-detail-grid{grid-template-columns:1fr}}`;
+document.head.appendChild(style);
+async function boot(){
+ const {data:{session}}=await sb.auth.getSession(); if(!session)return;
+ const {data:me}=await sb.from('profiles').select('is_admin').eq('id',session.user.id).maybeSingle(); if(!me?.is_admin)return;
+ const ordersTable=document.getElementById('adminOrders'); if(!ordersTable)return;
+ const head=ordersTable.closest('table')?.querySelector('thead tr');
+ if(head&&!head.querySelector('[data-detail-head]')){const th=document.createElement('th');th.dataset.detailHead='1';th.textContent='DETAILS';head.appendChild(th)}
+ const run=async()=>{
+   const {data:orders,error}=await sb.from('orders').select('id,order_number,user_id,customer_name,customer_phone,city,delivery_address,customer_note,payment_method,payment_status,order_status,subtotal,delivery_fee,total,created_at,order_items(product_name,size,quantity,unit_price,line_total)').order('created_at',{ascending:false}).limit(200);
+   if(error)return;
+   const rows=[...ordersTable.querySelectorAll('tr')];
+   rows.forEach(row=>{const first=row.querySelector('td');if(!first)return;const num=first.textContent.trim();const order=orders.find(o=>o.order_number===num);if(!order)return;let cell=row.querySelector('[data-detail-cell]');if(!cell){cell=document.createElement('td');cell.dataset.detailCell='1';row.appendChild(cell)}cell.innerHTML=`<button class="admin-order-row-button" data-order-id="${order.id}">VIEW</button>`;cell.querySelector('button').onclick=()=>show(order)});
+   window.odoAdminOrdersDetailed=orders;
+ };
+ const originalRefresh=window.odoAdminRefreshOrders;
+ if(!originalRefresh){window.odoAdminRefreshOrders=run; await run(); setTimeout(run,1200); setInterval(run,15000)}
+};
+function show(o){let m=document.getElementById('adminOrderDetailModal');if(!m){m=document.createElement('div');m.id='adminOrderDetailModal';m.className='admin-detail-modal';m.innerHTML='<div class="admin-detail-card"><button class="admin-detail-close">×</button><div id="adminDetailBody"></div></div>';document.body.appendChild(m);m.querySelector('.admin-detail-close').onclick=()=>m.classList.remove('open');m.onclick=e=>{if(e.target===m)m.classList.remove('open')}}
+ const items=(o.order_items||[]).map(i=>`${esc(i.product_name)} · Size ${esc(i.size)} × ${i.quantity} — ${money(i.line_total)}`).join('<br>');
+ const phone=String(o.customer_phone||'').replace(/\D/g,'');
+ m.querySelector('#adminDetailBody').innerHTML=`<p class="eyebrow">ODOFASHION / ORDER DETAILS</p><h2>${esc(o.order_number)}</h2><div class="admin-detail-grid"><div class="admin-detail-box"><span>CUSTOMER</span><strong>${esc(o.customer_name)}</strong></div><div class="admin-detail-box"><span>PHONE</span><strong>${esc(o.customer_phone)}</strong></div><div class="admin-detail-box"><span>LOCATION</span><div>${esc(o.city||'Not provided')}</div></div><div class="admin-detail-box"><span>DELIVERY ADDRESS</span><div>${esc(o.delivery_address||'Not provided')}</div></div><div class="admin-detail-box"><span>PAYMENT</span><div>${esc(o.payment_method)} · ${esc(o.payment_status||'')}</div></div><div class="admin-detail-box"><span>ORDER STATUS</span><div>${esc(o.order_status)}</div></div><div class="admin-detail-box"><span>ORDERED</span><div>${fmt(o.created_at)}</div></div><div class="admin-detail-box"><span>ORDER NOTE</span><div>${esc(o.customer_note||'—')}</div></div></div><div class="admin-detail-box"><span>PRODUCTS</span><div>${items||'—'}</div><strong style="display:block;margin-top:12px;color:#e5c982">TOTAL · ${money(o.total)}</strong></div><div class="admin-order-actions">${phone?`<a href="https://wa.me/${phone}" target="_blank" rel="noopener">WHATSAPP CUSTOMER →</a><a href="tel:${esc(o.customer_phone)}">CALL CUSTOMER →</a>`:''}<button id="copyOrderDetails">COPY DETAILS</button></div>`;
+ m.classList.add('open');m.querySelector('#copyOrderDetails').onclick=async()=>{const text=`${o.order_number}\nCustomer: ${o.customer_name}\nPhone: ${o.customer_phone}\nLocation: ${o.city||''}\nAddress: ${o.delivery_address||''}\nPayment: ${o.payment_method}\nStatus: ${o.order_status}\nTotal: ${money(o.total)}\n${(o.order_items||[]).map(i=>`${i.product_name} / Size ${i.size} x ${i.quantity}`).join('\n')}`;await navigator.clipboard?.writeText(text);m.querySelector('#copyOrderDetails').textContent='COPIED'};
+}
+boot();
