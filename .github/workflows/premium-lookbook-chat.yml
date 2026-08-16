@@ -31,6 +31,9 @@ jobs:
           if ! grep -q 'ODO_AI_ASSISTANT_V1' script.js; then
             cat .github/odo-assistant.js >> script.js
           fi
+          if ! grep -q 'google-login.js' index.html; then
+            sed -i 's#</body>#<script src="google-login.js"></script></body>#' index.html
+          fi
           rm -f .github/odo-premium.css .github/odo-assistant.js
 
       - name: Setup Pages
