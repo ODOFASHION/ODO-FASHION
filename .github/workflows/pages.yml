@@ -57,6 +57,13 @@ jobs:
           if ! grep -q 'product-engagement.js' index.html; then
             sed -i 's#</body>#<script src="product-engagement.js"></script></body>#' index.html
           fi
+      - name: Load live Supabase product catalog
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'dynamic-products.js' index.html; then
+            sed -i 's#</body>#<script type="module" src="dynamic-products.js"></script></body>#' index.html
+          fi
       - name: Add second ODO WhatsApp customer-care number
         shell: bash
         run: |
