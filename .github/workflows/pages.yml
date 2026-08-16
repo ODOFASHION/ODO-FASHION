@@ -47,6 +47,13 @@ jobs:
           if ! grep -q 'policies.js' index.html; then
             sed -i 's#</body>#<script src="policies.js"></script></body>#' index.html
           fi
+      - name: Add cart back-to-shop control
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'cart-back.js' index.html; then
+            sed -i 's#</body>#<script src="cart-back.js"></script></body>#' index.html
+          fi
       - name: Clean shared tracking parameters from visible URL
         shell: bash
         run: |
