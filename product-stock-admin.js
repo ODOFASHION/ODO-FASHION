@@ -117,3 +117,28 @@ async function boot() {
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+
+// Intercept order-status changes before admin.js updates the order directly.
+// This keeps stock changes atomic inside the Supabase RPC.
+document.addEventListener('change', async (event) => {
+  const select = event.target?.closest?.('.status-select');
+  if (!select || !select.dataset.orderId) return;
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  const status = select.value;
+  try {
+    const { error } = await sb.rpc('admin_update_order_status', {
+      p_order_id: select.dataset.orderId,
+      p_new_status: status
+    });
+    if (error) throw error;
+    await window.odoAdminRefreshOrders?.();
+    if (!window.odoAdminRefreshOrders) location.reload();
+  } catch (error) {
+    console.error('ODO stock update:', error);
+    alert(`Stock update failed: ${error.message || error}`);
+    await window.odoAdminRefreshOrders?.();
+  }
+}, true);
