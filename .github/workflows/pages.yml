@@ -40,6 +40,13 @@ jobs:
           if ! grep -q 'google-login.js' index.html; then
             sed -i 's#<script src="order-fix.js"></script>#<script src="order-fix.js"></script><script src="google-login.js"></script>#' index.html
           fi
+      - name: Add legal policy links
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'policies.js' index.html; then
+            sed -i 's#</body>#<script src="policies.js"></script></body>#' index.html
+          fi
       - name: Clean shared tracking parameters from visible URL
         shell: bash
         run: |
