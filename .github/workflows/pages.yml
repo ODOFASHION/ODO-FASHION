@@ -54,6 +54,19 @@ jobs:
           if ! grep -q 'cart-back.js' index.html; then
             sed -i 's#</body>#<script src="cart-back.js"></script></body>#' index.html
           fi
+      - name: Add ODOFASHION SEO metadata
+        shell: bash
+        run: |
+          set -e
+          python - <<'PY'
+          from pathlib import Path
+          page = Path('index.html')
+          seo = Path('.github/seo-head.html').read_text(encoding='utf-8')
+          text = page.read_text(encoding='utf-8')
+          if seo not in text:
+              text = text.replace('</head>', seo + '</head>', 1)
+              page.write_text(text, encoding='utf-8')
+          PY
       - name: Clean shared tracking parameters from visible URL
         shell: bash
         run: |
