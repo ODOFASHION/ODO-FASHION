@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://odofashion.github.io/ODO-FASHION/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
+  <url><loc>https://odofashion.github.io/ODO-FASHION/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://odofashion.github.io/ODO-FASHION/privacy-policy.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://odofashion.github.io/ODO-FASHION/terms-and-conditions.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://odofashion.github.io/ODO-FASHION/shipping-delivery.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://odofashion.github.io/ODO-FASHION/returns-exchange.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://odofashion.github.io/ODO-FASHION/refund-policy.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
 </urlset>
