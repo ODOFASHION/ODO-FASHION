@@ -50,6 +50,13 @@ jobs:
           if ! grep -q 'customer-chat-ai.js' index.html; then
             sed -i 's#</body>#<script type="module" src="customer-chat-ai.js"></script></body>#' index.html
           fi
+      - name: Add ODO product wishlist and sharing
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'product-engagement.js' index.html; then
+            sed -i 's#</body>#<script src="product-engagement.js"></script></body>#' index.html
+          fi
       - name: Add second ODO WhatsApp customer-care number
         shell: bash
         run: |
