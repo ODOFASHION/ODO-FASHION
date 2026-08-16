@@ -33,6 +33,16 @@ jobs:
           if ! grep -q 'journal-admin.js' admin.html; then
             sed -i 's#</body>#<script type="module" src="journal-admin.js"></script></body>#' admin.html
           fi
+      - name: Add ODO customer messaging
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'chat.js' index.html; then
+            sed -i 's#</body>#<script type="module" src="chat.js"></script></body>#' index.html
+          fi
+          if ! grep -q 'admin-chat.js' admin.html; then
+            sed -i 's#</body>#<script type="module" src="admin-chat.js"></script></body>#' admin.html
+          fi
       - name: Add second ODO WhatsApp customer-care number
         shell: bash
         run: |
