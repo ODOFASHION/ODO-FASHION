@@ -43,6 +43,13 @@ jobs:
           if ! grep -q 'admin-chat.js' admin.html; then
             sed -i 's#</body>#<script type="module" src="admin-chat.js"></script></body>#' admin.html
           fi
+      - name: Add unified ODO chat and AI assistant UX
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'customer-chat-ai.js' index.html; then
+            sed -i 's#</body>#<script type="module" src="customer-chat-ai.js"></script></body>#' index.html
+          fi
       - name: Add second ODO WhatsApp customer-care number
         shell: bash
         run: |
