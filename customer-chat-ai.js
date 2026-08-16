@@ -97,3 +97,4 @@ function mountBetterBot(){
 function start(){enhanceCustomerChat();mountBetterBot();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 setTimeout(start,1200);setTimeout(start,3000);
+import './product-catalog.js';
