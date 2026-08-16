@@ -19,13 +19,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Add ODO Journal public display
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'journal.js' index.html; then
+            sed -i 's#</body>#<script type="module" src="journal.js"></script></body>#' index.html
+          fi
+      - name: Add ODO Journal admin panel
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'journal-admin.js' admin.html; then
+            sed -i 's#</body>#<script type="module" src="journal-admin.js"></script></body>#' admin.html
+          fi
       - name: Add second ODO WhatsApp customer-care number
         shell: bash
         run: |
           set -e
-          if ! grep -q 'ODO_SUPPORT_2NUM_V1' script.js; then
-            cat .github/odo-support.js >> script.js
-          fi
+          if ! grep -q 'ODO_SUPPORT_2NUM_V1' script.js; then cat .github/odo-support.js >> script.js; fi
       - name: Create ODO visitor tracker
         shell: bash
         run: |
@@ -49,64 +61,46 @@ jobs:
         shell: bash
         run: |
           set -e
-          if ! grep -q 'order-fix.js' index.html; then
-            sed -i 's#<script type="module" src="auth.js"></script>#<script type="module" src="auth.js"></script><script src="order-fix.js"></script>#' index.html
-          fi
+          if ! grep -q 'order-fix.js' index.html; then sed -i 's#<script type="module" src="auth.js"></script>#<script type="module" src="auth.js"></script><script src="order-fix.js"></script>#' index.html; fi
       - name: Add Google sign-in button
         shell: bash
         run: |
           set -e
-          if ! grep -q 'google-login.js' index.html; then
-            sed -i 's#<script src="order-fix.js"></script>#<script src="order-fix.js"></script><script src="google-login.js"></script>#' index.html
-          fi
+          if ! grep -q 'google-login.js' index.html; then sed -i 's#<script src="order-fix.js"></script>#<script src="order-fix.js"></script><script src="google-login.js"></script>#' index.html; fi
       - name: Add legal policy links
         shell: bash
         run: |
           set -e
-          if ! grep -q 'policies.js' index.html; then
-            sed -i 's#</body>#<script src="policies.js"></script></body>#' index.html
-          fi
+          if ! grep -q 'policies.js' index.html; then sed -i 's#</body>#<script src="policies.js"></script></body>#' index.html; fi
       - name: Add cart back-to-shop control
         shell: bash
         run: |
           set -e
-          if ! grep -q 'cart-back.js' index.html; then
-            sed -i 's#</body>#<script src="cart-back.js"></script></body>#' index.html
-          fi
+          if ! grep -q 'cart-back.js' index.html; then sed -i 's#</body>#<script src="cart-back.js"></script></body>#' index.html; fi
       - name: Add ODO visitor tracking
         shell: bash
         run: |
           set -e
-          if ! grep -q 'visit-tracker.js' index.html; then
-            sed -i 's#</body>#<script type="module" src="visit-tracker.js"></script></body>#' index.html
-          fi
+          if ! grep -q 'visit-tracker.js' index.html; then sed -i 's#</body>#<script type="module" src="visit-tracker.js"></script></body>#' index.html; fi
       - name: Add visitor analytics to admin dashboard
         shell: bash
         run: |
           set -e
-          if ! grep -q 'admin-visits.js' admin.html; then
-            sed -i 's#</body>#<script type="module" src="admin-visits.js"></script></body>#' admin.html
-          fi
+          if ! grep -q 'admin-visits.js' admin.html; then sed -i 's#</body>#<script type="module" src="admin-visits.js"></script></body>#' admin.html; fi
       - name: Add ODOFASHION SEO metadata
         shell: bash
         run: |
           set -e
           python - <<'PY'
           from pathlib import Path
-          page = Path('index.html')
-          seo = Path('.github/seo-head.html').read_text(encoding='utf-8')
-          text = page.read_text(encoding='utf-8')
-          if seo not in text:
-              text = text.replace('</head>', seo + '</head>', 1)
-              page.write_text(text, encoding='utf-8')
+          page=Path('index.html'); seo=Path('.github/seo-head.html').read_text(encoding='utf-8'); text=page.read_text(encoding='utf-8')
+          if seo not in text: page.write_text(text.replace('</head>',seo+'</head>',1),encoding='utf-8')
           PY
       - name: Clean shared tracking parameters from visible URL
         shell: bash
         run: |
           set -e
-          if ! grep -q 'clean-url.js' index.html; then
-            sed -i 's#</body>#<script src="clean-url.js"></script></body>#' index.html
-          fi
+          if ! grep -q 'clean-url.js' index.html; then sed -i 's#</body>#<script src="clean-url.js"></script></body>#' index.html; fi
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
