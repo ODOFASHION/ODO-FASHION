@@ -54,6 +54,20 @@ jobs:
           if ! grep -q 'cart-back.js' index.html; then
             sed -i 's#</body>#<script src="cart-back.js"></script></body>#' index.html
           fi
+      - name: Add ODO visitor tracking
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'visit-tracker.js' index.html; then
+            sed -i 's#</body>#<script type="module" src="visit-tracker.js"></script></body>#' index.html
+          fi
+      - name: Add visitor analytics to admin dashboard
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'admin-visits.js' admin.html; then
+            sed -i 's#</body>#<script type="module" src="admin-visits.js"></script></body>#' admin.html
+          fi
       - name: Add ODOFASHION SEO metadata
         shell: bash
         run: |
