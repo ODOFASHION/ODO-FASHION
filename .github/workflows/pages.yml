@@ -64,6 +64,13 @@ jobs:
           if ! grep -q 'customer-chat-ai.js' index.html; then
             sed -i 's#</body>#<script type="module" src="customer-chat-ai.js"></script></body>#' index.html
           fi
+      - name: Add Dipesh Kunwar team profile
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'team-profile.js' index.html; then
+            sed -i 's#</body>#<script type="module" src="team-profile.js"></script></body>#' index.html
+          fi
       - name: Add second ODO WhatsApp customer-care number
         shell: bash
         run: |
