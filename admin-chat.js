@@ -34,3 +34,4 @@ async function loadThreads(){
  wrap.querySelectorAll('.odo-thread-reply').forEach(form=>form.onsubmit=async e=>{e.preventDefault();const userId=form.dataset.userId;const text=form.querySelector('textarea').value.trim();if(!text)return;const {error}=await sb.from('customer_messages').insert({user_id:userId,sender_role:'admin',message:text});if(error){alert(error.message);return}form.querySelector('textarea').value='';await loadThreads()});
 }
 boot();
+import './admin-products.js';
