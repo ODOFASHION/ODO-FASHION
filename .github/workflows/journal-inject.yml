@@ -1,0 +1,33 @@
+name: Add ODO Journal to site
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Inject journal scripts
+        shell: bash
+        run: |
+          set -e
+          changed=0
+          if ! grep -q 'journal.js' index.html; then
+            sed -i 's#</body>#<script type="module" src="journal.js"></script></body>#' index.html
+            changed=1
+          fi
+          if ! grep -q 'admin-journal.js' admin.html; then
+            sed -i 's#</body>#<script type="module" src="admin-journal.js"></script></body>#' admin.html
+            changed=1
+          fi
+          if [ "$changed" -eq 1 ]; then
+            git config user.name "ODOFASHION"
+            git config user.email "arorafilms8@gmail.com"
+            git add index.html admin.html
+            git commit -m "Add ODO Journal and admin editor"
+            git push
+          fi
