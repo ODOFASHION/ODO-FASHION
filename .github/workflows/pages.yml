@@ -123,11 +123,6 @@ jobs:
           page=Path('index.html'); seo=Path('.github/seo-head.html').read_text(encoding='utf-8'); text=page.read_text(encoding='utf-8')
           if seo not in text: page.write_text(text.replace('</head>',seo+'</head>',1),encoding='utf-8')
           PY
-      - name: Clean shared tracking parameters from visible URL
-        shell: bash
-        run: |
-          set -e
-          if ! grep -q 'clean-url.js' index.html; then sed -i 's#</body>#<script src="clean-url.js"></script></body>#' index.html; fi
       - name: Apply ODO premium friendly UI layer
         shell: bash
         run: |
@@ -144,6 +139,27 @@ jobs:
               text=text.replace('</body>',js+'</body>')
           p.write_text(text,encoding='utf-8')
           PY
+      - name: Apply ODO UI v4 action + motion layer
+        shell: bash
+        run: |
+          set -e
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          text=p.read_text(encoding='utf-8')
+          css='<link rel="stylesheet" href=".github/odo-ui-v4.css?v=4">'
+          if css not in text:
+              text=text.replace('</head>',css+'</head>',1)
+          js='<script src=".github/odo-ui-v4.js?v=4"></script>'
+          if js not in text:
+              text=text.replace('</body>',js+'</body>')
+          p.write_text(text,encoding='utf-8')
+          PY
+      - name: Clean shared tracking parameters from visible URL
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'clean-url.js' index.html; then sed -i 's#</body>#<script src="clean-url.js"></script></body>#' index.html; fi
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
