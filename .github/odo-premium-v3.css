@@ -1,0 +1,42 @@
+/* ODO PREMIUM V3 — friendly luxury streetwear UI */
+:root{--odo-bg:#060606;--odo-panel:#0d0d0c;--odo-cream:#f7f2e9;--odo-gold:#d6b56f;--odo-muted:#98938a;--odo-line:rgba(247,242,233,.10)}
+html{scroll-behavior:smooth}body{background:var(--odo-bg);color:var(--odo-cream);font-family:'DM Sans',system-ui,sans-serif}body:before{background:radial-gradient(circle at 78% 0%,rgba(214,181,111,.11),transparent 24%),radial-gradient(circle at 10% 70%,rgba(255,255,255,.03),transparent 30%)}
+/* Header: one clean row on desktop */
+.nav{height:82px!important;display:flex!important;align-items:center!important;gap:18px!important;padding:0 clamp(18px,5vw,74px)!important;background:rgba(6,6,6,.80)!important;backdrop-filter:blur(24px)!important;box-shadow:0 12px 40px rgba(0,0,0,.18)}.brand{flex:0 0 auto}.nav nav{display:flex!important;align-items:center;justify-content:center;gap:clamp(16px,2.2vw,34px);flex:1}.odo-account-btn{margin-left:auto!important;margin-right:0!important;flex:0 0 auto!important}.cart-link{flex:0 0 auto!important}.nav nav a{position:relative;padding:8px 0}.nav nav a:after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--odo-gold);transform:scaleX(0);transform-origin:right;transition:transform .35s ease}.nav nav a:hover:after,.nav nav a:focus-visible:after{transform:scaleX(1);transform-origin:left}
+/* Friendly action buttons */
+.odo-account-btn,.cart-link,.odo-save-nav,.nav-action-btn{border-radius:999px!important;transition:transform .25s ease,background .25s ease,border-color .25s ease,box-shadow .25s ease!important}.odo-account-btn:hover,.cart-link:hover,.nav-action-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.28)}
+/* Hero refinements */
+.hero{isolation:isolate}.hero:before{animation:odoBreath 10s ease-in-out infinite alternate}.hero:after{animation:odoOrbit 18s linear infinite}.hero-logo{animation:odoFloat 6s ease-in-out infinite}.hero h1{max-width:10ch}.hero-lead{max-width:560px}.hero-actions .button{border-radius:999px}.quiet-link{transition:color .25s ease,transform .25s ease}.quiet-link:hover{transform:translateX(4px)}
+/* Soft reveal system */
+.odo-reveal{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}.odo-reveal.is-visible{opacity:1;transform:none}
+/* Product cards */
+.product{border-radius:18px!important;box-shadow:0 18px 60px rgba(0,0,0,.20);will-change:transform}.product:hover{transform:translateY(-8px)!important;box-shadow:0 34px 90px rgba(0,0,0,.44)!important}.product-meta{padding-top:22px!important}.product h3{font-size:clamp(1.2rem,1.75vw,1.65rem)!important}.price{font-size:.98rem!important}.status{border-radius:999px!important}.add-btn{border-radius:999px!important;min-height:44px}.size-select{border-radius:10px!important;min-height:44px}.product-desc{color:#88847c!important}
+.odo-stock-note{margin:10px 20px 0!important;padding:8px 10px!important;border:1px solid rgba(214,181,111,.18)!important;border-radius:999px!important;font-size:.5rem!important;letter-spacing:.12em!important;color:#a9a49b!important;background:rgba(214,181,111,.035)!important}.odo-stock-note:before{content:'● ';color:var(--odo-gold)}
+/* Live catalog card consistency */
+#odoLiveCatalog{margin-top:20px!important;padding-top:90px!important;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent)!important}.odo-live-grid .product{min-height:100%}
+/* Review blocks */
+.odo-review-box,.odo-review-summary{border-radius:14px!important;border-color:rgba(214,181,111,.16)!important;background:rgba(255,255,255,.015)!important}.odo-review-box button{border-radius:999px!important}
+/* Accessories */
+.category-card{border-radius:18px!important}.category-card.active{box-shadow:0 25px 70px rgba(0,0,0,.28)!important}
+/* Statement / trust rhythm */
+.statement{position:relative;overflow:hidden}.statement:before{content:'ODO';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:900 22vw/1 'Space Grotesk',sans-serif;letter-spacing:-.1em;color:rgba(0,0,0,.045);pointer-events:none}.statement>*{position:relative;z-index:1}
+/* Friendly support cards */
+.support-card{border-radius:18px!important;transition:transform .35s ease,border-color .35s ease,background .35s ease}.support-card:hover{transform:translateY(-6px);border-color:rgba(214,181,111,.32)!important;background:linear-gradient(145deg,#121210,#090908)!important}.support-button{border-radius:999px!important}
+/* Cart / checkout feel */
+.cart-panel,.checkout-card{border-radius:22px 0 0 22px!important}.checkout-card{border-radius:22px!important}.checkout-submit,.checkout-btn{border-radius:999px!important;min-height:48px}
+/* Remove stale hard-coded pricing copy */
+.checkout-intro{color:#8c877f!important}.cart-note{color:#77736b}
+/* Floating grain + motion */
+.odo-spark-field{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}.odo-spark{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--odo-gold);opacity:.20;filter:blur(.3px);animation:odoDrift linear infinite}
+/* Search / saved utility area */
+.odo-top-actions{display:flex;align-items:center;gap:8px;margin-left:10px}.odo-top-actions button{width:42px;height:42px;border-radius:50%;border:1px solid rgba(214,181,111,.26);background:#0b0b0a;color:var(--odo-cream);display:grid;place-items:center;cursor:pointer;transition:.25s}.odo-top-actions button:hover{background:var(--odo-cream);color:#080808;transform:translateY(-2px)}
+/* Mobile header */
+.odo-menu-btn{display:none;width:42px;height:42px;border-radius:50%;border:1px solid rgba(214,181,111,.3);background:#0b0b0a;color:var(--odo-cream)}
+.odo-mobile-menu{position:fixed;inset:82px 0 auto 0;z-index:75;background:rgba(7,7,7,.97);backdrop-filter:blur(25px);border-bottom:1px solid var(--odo-line);padding:18px 22px;display:none}.odo-mobile-menu.open{display:grid}.odo-mobile-menu a{padding:13px 2px;border-bottom:1px solid rgba(255,255,255,.06);text-transform:uppercase;letter-spacing:.12em;font-size:.65rem}
+@media(max-width:930px){.nav nav{gap:14px}.nav nav a{font-size:.5rem}.odo-account-btn{padding:9px 11px!important}.cart-link{padding:10px 12px!important}}
+@media(max-width:760px){.nav{height:70px!important;padding:0 16px!important}.nav nav{display:none!important}.odo-menu-btn{display:grid!important;place-items:center}.odo-account-btn{margin-left:auto!important}.site-logo{width:40px;height:40px;margin-right:8px}.brand{font-size:.86rem}.hero{min-height:calc(100svh - 70px);grid-template-columns:1fr!important;padding:60px 22px 80px!important;text-align:left}.hero-copy{z-index:3}.hero-symbol{opacity:.22;position:absolute;inset:25% -12% auto auto;transform:rotate(-8deg);pointer-events:none}.hero h1{font-size:clamp(4.2rem,19vw,7rem);margin-bottom:26px}.hero-lead{font-size:.82rem}.hero-actions{flex-wrap:wrap;gap:10px}.button{padding:13px 18px}.section{padding:72px 20px}.section-top{display:block;margin-bottom:38px}.section-intro{margin-top:18px}.category-strip,.streetwear-products,.look-grid{grid-template-columns:1fr!important}.product-art{height:430px!important}.product-controls{grid-template-columns:92px 1fr!important}.statement{padding:90px 22px!important}.statement p{font-size:clamp(2.1rem,11vw,4rem)!important}.footer-spacer{height:0}.odo-ai-launcher{bottom:84px!important}.odo-ai-window{bottom:150px!important}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+@keyframes odoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes odoBreath{0%{transform:scale(1)}100%{transform:scale(1.04)}}
+@keyframes odoOrbit{to{transform:rotate(360deg)}}
+@keyframes odoDrift{from{transform:translate3d(0,15vh,0)}to{transform:translate3d(30vw,-100vh,0)}}
