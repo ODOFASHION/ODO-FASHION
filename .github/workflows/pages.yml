@@ -28,14 +28,9 @@ jobs:
           import re
           p=Path('index.html')
           text=p.read_text(encoding='utf-8')
-          text=re.sub(r'<script[^>]+src=["\']dynamic-products\.js[^>]*></script>', '', text, flags=re.I)
-          text=re.sub(r'<script[^>]+src=["\']product-engagement\.js(?:\?[^"\']*)?[^>]*></script>', '', text, flags=re.I)
-          text=re.sub(r'<script[^>]+src=["\']odo-catalog-loader\.js(?:\?[^"\']*)?[^>]*></script>', '', text, flags=re.I)
-          for src in [
-              'product-engagement.js?v=9',
-              'odo-catalog-loader.js?v=1',
-              'dipesh-profile.js?v=1'
-          ]:
+          for src in ['dynamic-products.js','product-engagement.js','odo-catalog-loader.js','dipesh-profile.js','order-tracking.js']:
+              text=re.sub(r'<script[^>]+src=["\']'+re.escape(src)+r'(?:\?[^"\']*)?[^>]*></script>', '', text, flags=re.I)
+          for src in ['product-engagement.js?v=9','odo-catalog-loader.js?v=1','dipesh-profile.js?v=1','order-tracking.js?v=1']:
               tag=f'<script type="module" src="{src}"></script>'
               if tag not in text:
                   text=text.replace('</body>',tag+'</body>')
