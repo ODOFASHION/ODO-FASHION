@@ -1,3 +1,4 @@
+import './premium-loader.js';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const sb = createClient('https://gqlcxvukyezqpdftjdeo.supabase.co','sb_publishable_ViHQ2SZREPXE_GCrN_zDrw__kXoN9D8');
 const money=v=>`NPR ${Number(v||0).toLocaleString('en-NP')}`;
