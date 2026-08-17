@@ -28,7 +28,7 @@ jobs:
           import re
           p=Path('index.html')
           text=p.read_text(encoding='utf-8')
-          for src in ['dynamic-products.js','product-engagement.js','odo-catalog-loader.js','dipesh-profile.js','order-tracking.js','product-reviews.js','return-exchange.js','stock-checkout-fix.js','odo-premium-v3.js','odo-contact-enhance.js','odo-ui-v4.js']:
+          for src in ['dynamic-products.js','product-engagement.js','odo-catalog-loader.js','dipesh-profile.js','order-tracking.js','product-reviews.js','return-exchange.js','stock-checkout-fix.js','odo-premium-v3.js','odo-contact-enhance.js','odo-ui-v4.js','odo-ui-v5.js']:
               text=re.sub(r'<script[^>]+src=["\']'+re.escape(src)+r'(?:\?[^"\']*)?[^>]*></script>', '', text, flags=re.I)
           for src in ['product-engagement.js?v=9','odo-catalog-loader.js?v=1','dipesh-profile.js?v=1','order-tracking.js?v=1','product-reviews.js?v=1','return-exchange.js?v=1']:
               tag=f'<script type="module" src="{src}"></script>'
@@ -128,7 +128,7 @@ jobs:
         run: |
           set -e
           if ! grep -q 'clean-url.js' index.html; then sed -i 's#</body>#<script src="clean-url.js"></script></body>#' index.html; fi
-      - name: Load ODO v4 UI safely
+      - name: Load definitive ODO controls UI
         shell: bash
         run: |
           set -e
@@ -136,12 +136,12 @@ jobs:
           from pathlib import Path
           p=Path('index.html')
           text=p.read_text(encoding='utf-8')
-          tag='<script src="odo-ui-v4.js?v=4"></script>'
-          if tag not in text:
-              text=text.replace('</body>',tag+'</body>')
           css='<link rel="stylesheet" href="odo-ui-v5.css?v=5">'
           if css not in text:
               text=text.replace('</head>',css+'</head>',1)
+          js='<script src="odo-ui-v5.js?v=5"></script>'
+          if js not in text:
+              text=text.replace('</body>',js+'</body>')
           p.write_text(text,encoding='utf-8')
           PY
       - name: Setup Pages
