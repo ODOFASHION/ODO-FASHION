@@ -34,6 +34,11 @@ jobs:
               tag=f'<script type="module" src="{src}"></script>'
               if tag not in text:
                   text=text.replace('</body>',tag+'</body>')
+          # Critical: load the definitive commerce override BEFORE auth.js.
+          # auth.js contains legacy fixed-price handlers; the override captures clicks/submits first.
+          text=re.sub(r'<script[^>]+src=["\']auth\.js(?:\?[^"\']*)?["\'][^>]*></script>', '<script type="module" src="live-commerce-fix.js?v=1"></script><script type="module" src="auth.js"></script>', text, count=1, flags=re.I)
+          if 'live-commerce-fix.js?v=1' not in text:
+              text=text.replace('</body>','<script type="module" src="live-commerce-fix.js?v=1"></script></body>')
           p.write_text(text,encoding='utf-8')
           PY
       - name: Add ODO Journal public display
