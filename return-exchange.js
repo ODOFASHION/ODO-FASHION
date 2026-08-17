@@ -1,3 +1,4 @@
+import './odo-live-commerce-fix.js';
 import './price-sync.js';
 import './auth-price-fix.js';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
