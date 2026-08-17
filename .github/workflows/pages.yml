@@ -30,47 +30,31 @@ jobs:
           text=p.read_text(encoding='utf-8')
           text=re.sub(r'<script[^>]+src=["\']dynamic-products\.js[^>]*></script>', '', text, flags=re.I)
           text=re.sub(r'<script[^>]+src=["\']product-engagement\.js(?:\?[^"\']*)?[^>]*></script>', '', text, flags=re.I)
+          text=re.sub(r'<script[^>]+src=["\']odo-catalog-loader\.js(?:\?[^"\']*)?[^>]*></script>', '', text, flags=re.I)
+          text=text.replace('</body>','<script type="module" src="product-engagement.js?v=9"></script><script type="module" src="odo-catalog-loader.js?v=1"></script></body>')
           p.write_text(text,encoding='utf-8')
           PY
-          sed -i 's#</body>#<script type="module" src="product-engagement.js?v=8"></script></body>#' index.html
       - name: Add ODO Journal public display
         shell: bash
         run: |
           set -e
-          if ! grep -q 'journal.js' index.html; then
-            sed -i 's#</body>#<script type="module" src="journal.js"></script></body>#' index.html
-          fi
+          if ! grep -q 'journal.js' index.html; then sed -i 's#</body>#<script type="module" src="journal.js"></script></body>#' index.html; fi
       - name: Add ODO Journal admin panel
         shell: bash
         run: |
           set -e
-          if ! grep -q 'journal-admin.js' admin.html; then
-            sed -i 's#</body>#<script type="module" src="journal-admin.js"></script></body>#' admin.html
-          fi
+          if ! grep -q 'journal-admin.js' admin.html; then sed -i 's#</body>#<script type="module" src="journal-admin.js"></script></body>#' admin.html; fi
       - name: Add ODO customer messaging
         shell: bash
         run: |
           set -e
-          if ! grep -q 'chat.js' index.html; then
-            sed -i 's#</body>#<script type="module" src="chat.js"></script></body>#' index.html
-          fi
-          if ! grep -q 'admin-chat.js' admin.html; then
-            sed -i 's#</body>#<script type="module" src="admin-chat.js"></script></body>#' admin.html
-          fi
+          if ! grep -q 'chat.js' index.html; then sed -i 's#</body>#<script type="module" src="chat.js"></script></body>#' index.html; fi
+          if ! grep -q 'admin-chat.js' admin.html; then sed -i 's#</body>#<script type="module" src="admin-chat.js"></script></body>#' admin.html; fi
       - name: Add unified ODO chat and AI assistant UX
         shell: bash
         run: |
           set -e
-          if ! grep -q 'customer-chat-ai.js' index.html; then
-            sed -i 's#</body>#<script type="module" src="customer-chat-ai.js"></script></body>#' index.html
-          fi
-      - name: Add Dipesh Kunwar team profile
-        shell: bash
-        run: |
-          set -e
-          if ! grep -q 'team-profile.js' index.html; then
-            sed -i 's#</body>#<script type="module" src="team-profile.js"></script></body>#' index.html
-          fi
+          if ! grep -q 'customer-chat-ai.js' index.html; then sed -i 's#</body>#<script type="module" src="customer-chat-ai.js"></script></body>#' index.html; fi
       - name: Add second ODO WhatsApp customer-care number
         shell: bash
         run: |
