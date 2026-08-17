@@ -139,6 +139,9 @@ jobs:
           tag='<script src="odo-ui-v4.js?v=4"></script>'
           if tag not in text:
               text=text.replace('</body>',tag+'</body>')
+          css='<link rel="stylesheet" href="odo-ui-v5.css?v=5">'
+          if css not in text:
+              text=text.replace('</head>',css+'</head>',1)
           p.write_text(text,encoding='utf-8')
           PY
       - name: Setup Pages
