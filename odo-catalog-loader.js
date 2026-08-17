@@ -1,3 +1,5 @@
+import './product-detail.js';
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const sb=createClient('https://gqlcxvukyezqpdftjdeo.supabase.co','sb_publishable_ViHQ2SZREPXE_GCrN_zDrw__kXoN9D8');
 const esc=v=>String(v??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
