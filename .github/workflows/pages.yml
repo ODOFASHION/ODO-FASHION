@@ -81,6 +81,16 @@ jobs:
           async function boot(){const {data:{session}}=await sb.auth.getSession();if(!session)return;const {data:me}=await sb.from('profiles').select('is_admin').eq('id',session.user.id).maybeSingle();if(!me?.is_admin)return;const main=document.querySelector('.odo-admin-main');if(!main||document.getElementById('odoTrafficSection'))return;const sec=document.createElement('section');sec.id='odoTrafficSection';sec.className='odo-traffic-section';sec.innerHTML='<div style="margin:45px 0"><p class="eyebrow">WEBSITE ANALYTICS</p><h2>VISITORS.</h2><div id="trafficStats" class="odo-admin-stats"></div><div class="activity-grid"><div class="activity-card"><p class="eyebrow">TRAFFIC SOURCES</p><h3>WHERE PEOPLE CAME FROM.</h3><div id="trafficSources" class="activity-list"></div></div><div class="activity-card"><p class="eyebrow">POPULAR PAGES</p><h3>WHAT PEOPLE VIEWED.</h3><div id="trafficPages" class="activity-list"></div></div><div class="activity-card"><p class="eyebrow">DEVICES</p><h3>PHONE / DESKTOP / TABLET.</h3><div id="trafficDevices" class="activity-list"></div></div><div class="activity-card"><p class="eyebrow">BROWSERS</p><h3>BROWSER MIX.</h3><div id="trafficBrowsers" class="activity-list"></div></div></div><div class="odo-admin-table-wrap"><table class="odo-admin-table"><thead><tr><th>TIME</th><th>SOURCE</th><th>REFERRER</th><th>PAGE</th><th>DEVICE</th><th>BROWSER</th><th>SESSION</th><th>VISIT #</th></tr></thead><tbody id="trafficRows"></tbody></table></div><p class="customer-note">Privacy-safe analytics: random visitor/session IDs only. No names, GPS or IP address are collected by this tracker.</p></div>';main.prepend(sec);const {data:rows,error}=await sb.from('site_visits').select('visitor_id,session_id,page_path,referrer,source,device_type,browser,visit_number,created_at').order('created_at',{ascending:false}).limit(1000);if(error){document.getElementById('trafficRows').innerHTML='<tr><td colspan="8">Run visit-tracking.sql in Supabase first.</td></tr>';return}const visits=rows||[];const unique=new Set(visits.map(v=>v.visitor_id)).size,sessions=new Set(visits.map(v=>v.session_id)).size,today=visits.filter(v=>new Date(v.created_at)>=new Date(new Date().setHours(0,0,0,0))).length;document.getElementById('trafficStats').innerHTML=[['TOTAL VISITS',visits.length],['UNIQUE VISITORS',unique],['SESSIONS',sessions],['TODAY',today],['AVG VIEWS / SESSION',sessions?(visits.length/sessions).toFixed(1):'0']].map(([k,v])=>'<div class="odo-stat"><span>'+k+'</span><strong>'+v+'</strong></div>').join('');const agg=f=>{const m={};visits.forEach(v=>{const k=v[f]||'direct';m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,10)};const list=(id,a)=>document.getElementById(id).innerHTML=a.length?a.map(x=>'<div class="activity-row"><strong>'+esc(x[0])+'</strong><span>'+x[1]+'</span></div>').join(''):'<div class="activity-row"><span>No data yet.</span></div>';list('trafficSources',agg('source'));list('trafficPages',agg('page_path'));list('trafficDevices',agg('device_type'));list('trafficBrowsers',agg('browser'));document.getElementById('trafficRows').innerHTML=visits.length?visits.map(v=>'<tr><td>'+fmt(v.created_at)+'</td><td>'+esc(v.source||'direct')+'</td><td>'+esc(v.referrer||'direct / none')+'</td><td>'+esc(v.page_path)+'</td><td>'+esc(v.device_type)+'</td><td>'+esc(v.browser)+'</td><td>'+esc(String(v.session_id).slice(0,10))+'…</td><td>'+esc(v.visit_number||1)+'</td></tr>').join(''):'<tr><td colspan="8">No visits yet.</td></tr>'}
           boot();
           EOF
+      - name: Add visitor analytics to admin dashboard
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'admin-visits.js' admin.html; then sed -i 's#</body>#<script type="module" src="admin-visits.js"></script></body>#' admin.html; fi
+      - name: Add ODO marketing dashboard to admin
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'admin-marketing.js' admin.html; then sed -i 's#</body>#<script type="module" src="admin-marketing.js"></script></body>#' admin.html; fi
       - name: Add website-only order confirmation flow
         shell: bash
         run: |
@@ -106,11 +116,6 @@ jobs:
         run: |
           set -e
           if ! grep -q 'visit-tracker.js' index.html; then sed -i 's#</body>#<script type="module" src="visit-tracker.js"></script></body>#' index.html; fi
-      - name: Add visitor analytics to admin dashboard
-        shell: bash
-        run: |
-          set -e
-          if ! grep -q 'admin-visits.js' admin.html; then sed -i 's#</body>#<script type="module" src="admin-visits.js"></script></body>#' admin.html; fi
       - name: Add ODOFASHION SEO metadata
         shell: bash
         run: |
