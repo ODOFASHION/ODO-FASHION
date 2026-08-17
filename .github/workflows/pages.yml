@@ -128,6 +128,22 @@ jobs:
         run: |
           set -e
           if ! grep -q 'clean-url.js' index.html; then sed -i 's#</body>#<script src="clean-url.js"></script></body>#' index.html; fi
+      - name: Apply ODO premium friendly UI layer
+        shell: bash
+        run: |
+          set -e
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          text=p.read_text(encoding='utf-8')
+          css='<link rel="stylesheet" href="odo-premium-v3.css?v=3">'
+          if css not in text:
+              text=text.replace('</head>',css+'</head>',1)
+          js='<script src="odo-premium-v3.js?v=3"></script>'
+          if js not in text:
+              text=text.replace('</body>',js+'</body>')
+          p.write_text(text,encoding='utf-8')
+          PY
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
