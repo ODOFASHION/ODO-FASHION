@@ -1,0 +1,109 @@
+/* ODO UI V4 — premium, friendly, animated polish */
+:root{--odo-bg:#050505;--odo-panel:rgba(12,12,11,.82);--odo-cream:#f5f1e8;--odo-gold:#c8a560;--odo-gold2:#ead596;--odo-muted:#98938b;--odo-line:rgba(245,241,232,.12);--odo-ease:cubic-bezier(.2,.75,.2,1)}
+
+/* ---------- NAVIGATION ---------- */
+.nav{position:sticky!important;top:0!important;z-index:300!important;height:82px!important;padding:0 clamp(18px,5vw,76px)!important;display:grid!important;grid-template-columns:auto 1fr auto!important;gap:30px!important;background:rgba(5,5,5,.72)!important;border-bottom:1px solid rgba(245,241,232,.08)!important;backdrop-filter:blur(22px) saturate(1.2)!important;box-shadow:0 12px 42px rgba(0,0,0,.2)!important}
+.brand{justify-self:start!important;white-space:nowrap!important}
+.nav nav{justify-self:center!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:clamp(16px,2.4vw,34px)!important}
+.nav nav a{position:relative!important;padding:8px 0!important;font-size:.57rem!important;letter-spacing:.16em!important}
+.nav nav a:after{content:"";position:absolute;left:0;right:100%;bottom:2px;height:1px;background:var(--odo-gold);transition:right .28s var(--odo-ease)}
+.nav nav a:hover:after,.nav nav a:focus-visible:after{right:0}
+
+.odo-top-actions{justify-self:end!important;display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important;position:relative!important;z-index:310!important}
+.odo-top-actions>*{margin:0!important}
+.odo-top-actions #odoAccountBtn,.odo-top-actions #cartOpen,.odo-top-actions .odo-nav-icon{height:46px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border:1px solid rgba(200,165,96,.3)!important;background:rgba(9,9,8,.72)!important;color:var(--odo-cream)!important;border-radius:999px!important;transition:transform .25s var(--odo-ease),border-color .25s ease,background .25s ease,box-shadow .25s ease!important}
+.odo-top-actions #odoAccountBtn{padding:0 18px!important;font-size:.54rem!important;letter-spacing:.14em!important}
+.odo-top-actions #cartOpen{padding:0 14px!important;gap:8px!important;font-size:.54rem!important;letter-spacing:.12em!important}
+.odo-top-actions .odo-nav-icon{width:46px!important;padding:0!important;cursor:pointer!important}
+.odo-top-actions #odoAccountBtn:hover,.odo-top-actions #cartOpen:hover,.odo-top-actions .odo-nav-icon:hover{transform:translateY(-2px)!important;border-color:rgba(234,213,150,.82)!important;background:rgba(200,165,96,.09)!important;box-shadow:0 10px 28px rgba(0,0,0,.28),0 0 0 4px rgba(200,165,96,.05)!important}
+.odo-top-actions svg{width:18px!important;height:18px!important;display:block!important}
+.odo-top-actions #cartCount{width:21px!important;height:21px!important;min-width:21px!important;margin:0!important;border-radius:50%!important;background:var(--odo-gold)!important;color:#090909!important;font-size:.5rem!important}
+.odo-save-nav{font-size:0!important}
+.odo-save-nav svg{width:18px!important;height:18px!important}
+
+/* Hide accidental duplicate action buttons that create overlap. */
+.nav>.odo-save-nav,.nav>.saved-link{display:none!important}
+
+/* Search dialog from any existing search hook */
+.odo-search-modal{position:fixed;inset:0;z-index:420;background:rgba(0,0,0,.78);backdrop-filter:blur(14px);display:none;align-items:flex-start;justify-content:center;padding:110px 18px 30px}
+.odo-search-modal.open{display:flex}
+.odo-search-card{width:min(720px,100%);background:#0a0a09;border:1px solid rgba(200,165,96,.34);box-shadow:0 35px 100px rgba(0,0,0,.62);padding:20px;border-radius:22px}
+.odo-search-row{display:flex;gap:10px}
+.odo-search-input{flex:1;background:#060606;border:1px solid rgba(245,241,232,.15);color:var(--odo-cream);padding:15px 16px;border-radius:14px;outline:none;font:inherit}
+.odo-search-input:focus{border-color:rgba(200,165,96,.8);box-shadow:0 0 0 4px rgba(200,165,96,.06)}
+.odo-search-results{display:grid;gap:7px;margin-top:12px;max-height:52vh;overflow:auto}
+.odo-search-item{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 13px;border:1px solid rgba(245,241,232,.08);border-radius:14px;background:#10100f;color:#ddd;transition:.2s}
+.odo-search-item:hover{border-color:rgba(200,165,96,.45);transform:translateY(-1px)}
+
+/* ---------- HERO MOTION ---------- */
+.hero{isolation:isolate!important}
+.hero:after{animation:odoRingDrift 18s ease-in-out infinite alternate!important}
+.hero:before{animation:odoWordFloat 16s ease-in-out infinite alternate!important}
+.hero-symbol .hero-logo{animation:odoLogoFloat 8s ease-in-out infinite!important}
+.odo-spark-field{position:fixed!important;inset:0!important;pointer-events:none!important;z-index:0!important;overflow:hidden!important}
+.odo-spark{position:absolute!important;width:3px!important;height:3px!important;border-radius:50%!important;background:var(--odo-gold2)!important;box-shadow:0 0 12px rgba(234,213,150,.65)!important;opacity:.15!important;animation:odoSparkUp linear infinite!important}
+.hero-copy,.hero-symbol,.scroll-note{z-index:2!important}
+@keyframes odoRingDrift{0%{transform:translate3d(0,0,0) rotate(0deg);opacity:.72}100%{transform:translate3d(-18px,16px,0) rotate(4deg);opacity:1}}
+@keyframes odoWordFloat{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-22px,-14px,0)}}
+@keyframes odoLogoFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-8px) rotate(.6deg)}}
+@keyframes odoSparkUp{0%{transform:translateY(0) scale(.8);opacity:0}15%{opacity:.2}70%{opacity:.12}100%{transform:translateY(-110vh) scale(1.2);opacity:0}}
+
+/* ---------- FRIENDLY TRUST RAIL ---------- */
+.odo-trust-pills{display:flex!important;flex-wrap:wrap!important;gap:8px!important;margin-top:28px!important}
+.odo-trust-pills span{display:inline-flex!important;align-items:center!important;gap:7px!important;padding:9px 12px!important;border:1px solid rgba(245,241,232,.11)!important;background:rgba(255,255,255,.025)!important;border-radius:999px!important;color:#9f9a91!important;font-size:.5rem!important;letter-spacing:.08em!important;transition:.25s ease!important}
+.odo-trust-pills span:hover{border-color:rgba(200,165,96,.5)!important;color:var(--odo-cream)!important;background:rgba(200,165,96,.07)!important;transform:translateY(-2px)!important}
+
+/* ---------- PRODUCT MOTION ---------- */
+.product{transform-style:preserve-3d!important;will-change:transform!important}
+.product .add-btn{position:relative!important;overflow:hidden!important}
+.product .add-btn:before{content:"";position:absolute;top:-120%;left:-30%;width:22%;height:350%;transform:rotate(18deg);background:rgba(255,255,255,.24);transition:left .55s ease!important}
+.product .add-btn:hover:before{left:120%}
+.product-photo{will-change:transform!important}
+.odo-reveal{opacity:0;transform:translateY(24px)!important;transition:opacity .65s var(--odo-ease),transform .65s var(--odo-ease)!important}
+.odo-reveal.is-visible{opacity:1;transform:none!important}
+
+/* ---------- CUSTOMER MESSAGE ---------- */
+#odoChatLauncher,.odo-chat-launcher{left:24px!important;right:auto!important;bottom:24px!important;z-index:360!important;border-radius:999px!important;padding:0 18px!important;height:48px!important;display:inline-flex!important;align-items:center!important;gap:9px!important;border:1px solid rgba(200,165,96,.55)!important;background:rgba(9,9,8,.92)!important;color:var(--odo-cream)!important;box-shadow:0 18px 50px rgba(0,0,0,.45)!important;backdrop-filter:blur(14px)!important}
+#odoChatLauncher:hover,.odo-chat-launcher:hover{transform:translateY(-3px)!important;border-color:var(--odo-gold2)!important;box-shadow:0 24px 65px rgba(0,0,0,.55),0 0 0 5px rgba(200,165,96,.05)!important}
+.odo-chat-launcher-icon{width:20px;height:20px;display:grid;place-items:center;border-radius:50%;background:var(--odo-gold);color:#090909}
+.odo-chat-launcher-icon svg{width:12px;height:12px}
+.odo-chat-panel{left:24px!important;right:auto!important;bottom:84px!important;border-radius:20px!important;overflow:hidden!important;box-shadow:0 30px 100px rgba(0,0,0,.7)!important;border-color:rgba(200,165,96,.32)!important}
+
+/* ---------- ODO AI ASSISTANT ---------- */
+#odoBetterAiLauncher,.odo-ai-launcher{right:24px!important;left:auto!important;bottom:24px!important;width:62px!important;height:62px!important;padding:0!important;border-radius:50%!important;display:grid!important;place-items:center!important;background:radial-gradient(circle at 35% 25%,#23231f,#090908 65%)!important;border:1px solid rgba(200,165,96,.72)!important;box-shadow:0 20px 60px rgba(0,0,0,.58),0 0 0 7px rgba(200,165,96,.05)!important;animation:odoAiPulse 3.6s ease-in-out infinite!important;overflow:hidden!important}
+#odoBetterAiLauncher img,.odo-ai-launcher img{width:34px!important;height:34px!important;object-fit:contain!important}
+#odoBetterAiLauncher:hover,.odo-ai-launcher:hover{transform:translateY(-4px) scale(1.04)!important;animation-play-state:paused!important}
+.odo-ai-label{position:absolute;right:0;bottom:-24px;color:#7e796f;font-size:.48rem;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+.odo-bot-panel{right:24px!important;bottom:98px!important;border-radius:20px!important;overflow:hidden!important;border-color:rgba(200,165,96,.35)!important;box-shadow:0 35px 110px rgba(0,0,0,.76)!important}
+@keyframes odoAiPulse{0%,100%{box-shadow:0 20px 60px rgba(0,0,0,.58),0 0 0 7px rgba(200,165,96,.05)}50%{box-shadow:0 20px 60px rgba(0,0,0,.58),0 0 0 12px rgba(200,165,96,.025)}}
+
+/* ---------- CHECKOUT FRIENDLINESS ---------- */
+.checkout-card{border-radius:22px!important}
+.checkout-submit,.checkout-btn{border-radius:999px!important;min-height:50px!important}
+.checkout-card input,.checkout-card textarea,.checkout-card select{border-radius:12px!important}
+.order-success{animation:odoSuccessIn .55s var(--odo-ease) both}
+@keyframes odoSuccessIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+
+/* ---------- REMOVE LEGACY OVERLAPS ---------- */
+.nav>.odo-top-actions + .odo-top-actions{display:none!important}
+#odoPremiumMenu{z-index:450!important}
+
+/* ---------- MOBILE ---------- */
+@media(max-width:1050px){
+  .nav{grid-template-columns:auto 1fr auto!important;gap:12px!important}
+  .nav nav{display:none!important}
+  .odo-top-actions{gap:6px!important}
+}
+@media(max-width:760px){
+  .nav{height:72px!important;padding:0 14px!important}
+  .brand .site-logo{width:38px!important;height:38px!important;margin-right:8px!important}
+  .odo-top-actions #odoAccountBtn{width:42px!important;padding:0!important;font-size:0!important}
+  .odo-top-actions #odoAccountBtn:before{content:"";width:17px;height:17px;display:block;background:currentColor;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c.8-4 3.5-6 8-6s7.2 2 8 6'/%3E%3C/svg%3E") center/contain no-repeat}
+  .odo-top-actions #cartOpen{width:50px!important;padding:0!important;font-size:0!important}
+  .odo-top-actions .odo-nav-icon{width:42px!important;height:42px!important}
+  #odoChatLauncher,.odo-chat-launcher{left:14px!important;bottom:14px!important;height:44px!important;padding:0 14px!important;font-size:.5rem!important}
+  #odoBetterAiLauncher,.odo-ai-launcher{right:14px!important;bottom:14px!important;width:56px!important;height:56px!important}
+  .odo-chat-panel{left:14px!important;bottom:72px!important;width:calc(100vw - 28px)!important}
+  .odo-bot-panel{right:14px!important;bottom:72px!important;width:calc(100vw - 28px)!important}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
