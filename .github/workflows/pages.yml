@@ -28,15 +28,15 @@ jobs:
           import re
           p=Path('index.html')
           text=p.read_text(encoding='utf-8')
-          for src in ['dynamic-products.js','product-engagement.js','odo-catalog-loader.js','dipesh-profile.js','order-tracking.js','product-reviews.js','return-exchange.js']:
+          for src in ['dynamic-products.js','product-engagement.js','odo-catalog-loader.js','dipesh-profile.js','order-tracking.js','product-reviews.js','return-exchange.js','stock-checkout-fix.js']:
               text=re.sub(r'<script[^>]+src=["\']'+re.escape(src)+r'(?:\?[^"\']*)?[^>]*></script>', '', text, flags=re.I)
           for src in ['product-engagement.js?v=9','odo-catalog-loader.js?v=1','dipesh-profile.js?v=1','order-tracking.js?v=1','product-reviews.js?v=1','return-exchange.js?v=1']:
               tag=f'<script type="module" src="{src}"></script>'
               if tag not in text:
                   text=text.replace('</body>',tag+'</body>')
-          # Critical: load the definitive commerce override BEFORE auth.js.
-          # auth.js contains legacy fixed-price handlers; the override captures clicks/submits first.
-          text=re.sub(r'<script[^>]+src=["\']auth\.js(?:\?[^"\']*)?["\'][^>]*></script>', '<script type="module" src="live-commerce-fix.js?v=1"></script><script type="module" src="auth.js"></script>', text, count=1, flags=re.I)
+          text=re.sub(r'<script[^>]+src=["\']auth\.js(?:\?[^"\']*)?["\'][^>]*></script>', '<script type="module" src="stock-checkout-fix.js?v=1"></script><script type="module" src="live-commerce-fix.js?v=1"></script><script type="module" src="auth.js"></script>', text, count=1, flags=re.I)
+          if 'stock-checkout-fix.js?v=1' not in text:
+              text=text.replace('</body>','<script type="module" src="stock-checkout-fix.js?v=1"></script></body>')
           if 'live-commerce-fix.js?v=1' not in text:
               text=text.replace('</body>','<script type="module" src="live-commerce-fix.js?v=1"></script></body>')
           p.write_text(text,encoding='utf-8')
