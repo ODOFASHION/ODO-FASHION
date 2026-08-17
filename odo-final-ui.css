@@ -1,0 +1,48 @@
+/* ODO FINAL UI — stable cleanup layer */
+:root{--odo-bg:#050505;--odo-cream:#f6f1e8;--odo-gold:#d4b36b;--odo-line:rgba(246,241,232,.12)}
+body{overflow-x:hidden}
+
+/* Kill accidental duplicate controls injected outside the real header */
+.hero>button,.hero>.search,.hero>.saved,.hero>.save-btn,.hero>[id*="search" i],.hero>[id*="save" i]{display:none!important}
+main>.search,.main-search,.floating-search,.floating-save{display:none!important}
+
+/* One polished header action group */
+.odo-final-actions{display:flex;align-items:center;gap:8px;margin-left:auto;flex:0 0 auto}
+.odo-final-action{width:44px;height:44px;border:1px solid rgba(212,179,107,.32);background:rgba(10,10,9,.88);color:var(--odo-cream);display:grid;place-items:center;border-radius:12px;cursor:pointer;transition:transform .25s ease,border-color .25s ease,background .25s ease,box-shadow .25s ease}
+.odo-final-action:hover{transform:translateY(-2px);border-color:var(--odo-gold);background:#11110f;box-shadow:0 12px 30px rgba(0,0,0,.32)}
+.odo-final-action svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.odo-final-cart{width:auto;padding:0 14px;display:flex;gap:8px;font-size:.55rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.odo-final-count{min-width:19px;height:19px;border-radius:50%;display:grid;place-items:center;background:var(--odo-gold);color:#080808;font-size:.51rem}
+.odo-final-saved{width:auto;padding:0 13px;gap:7px;font-size:.53rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+
+/* Search sheet */
+.odo-final-search{position:fixed;inset:0;z-index:260;background:rgba(0,0,0,.78);backdrop-filter:blur(16px);display:none;align-items:flex-start;justify-content:center;padding:110px 20px 30px}
+.odo-final-search.open{display:flex}
+.odo-final-search-card{width:min(760px,100%);background:#0b0b0a;border:1px solid rgba(212,179,107,.32);box-shadow:0 35px 100px rgba(0,0,0,.7);padding:24px;border-radius:20px}
+.odo-final-search-row{display:flex;gap:10px}.odo-final-search-input{flex:1;background:#060606;color:var(--odo-cream);border:1px solid rgba(246,241,232,.15);padding:15px 16px;font:inherit;outline:none;border-radius:12px}.odo-final-search-input:focus{border-color:var(--odo-gold)}
+.odo-final-search-close{width:48px;border:1px solid rgba(212,179,107,.32);background:#11110f;color:var(--odo-cream);border-radius:12px;cursor:pointer}
+.odo-final-results{display:grid;gap:8px;margin-top:15px;max-height:52vh;overflow:auto}.odo-final-result{display:flex;justify-content:space-between;gap:15px;padding:13px 14px;border:1px solid rgba(246,241,232,.08);border-radius:12px;color:#d9d2c6}.odo-final-result small{color:#8e887f}.odo-final-result:hover{border-color:rgba(212,179,107,.35);background:#11110f}
+
+/* Hero uses the right side instead of looking empty */
+.hero-symbol{display:flex!important;flex-direction:column;align-items:center;justify-content:center;min-height:520px}
+.odo-hero-frame{width:min(560px,92%);aspect-ratio:1/1;display:grid;place-items:center;position:relative;border:1px solid rgba(212,179,107,.2);border-radius:34px;background:radial-gradient(circle at 50% 38%,rgba(212,179,107,.12),rgba(6,6,6,.55) 45%,rgba(6,6,6,.9) 78%);box-shadow:inset 0 0 80px rgba(212,179,107,.035),0 30px 100px rgba(0,0,0,.4);overflow:hidden}
+.odo-hero-frame:before,.odo-hero-frame:after{content:"";position:absolute;border:1px solid rgba(212,179,107,.16);border-radius:50%;inset:13%;animation:odoFinalSpin 22s linear infinite}.odo-hero-frame:after{inset:24%;border-style:dashed;animation-direction:reverse;animation-duration:28s}
+.odo-hero-frame .hero-logo{width:58%;opacity:.72;filter:drop-shadow(0 0 30px rgba(212,179,107,.12));animation:odoFinalFloat 5s ease-in-out infinite}
+.odo-hero-meta{position:absolute;left:22px;right:22px;bottom:19px;display:flex;justify-content:space-between;gap:15px;color:#8f897f;font-size:.5rem;letter-spacing:.14em;text-transform:uppercase}
+.odo-hero-meta strong{color:var(--odo-cream)}
+.odo-hero-badge{margin-top:16px;font-size:.52rem;letter-spacing:.34em;color:#7f7a72;text-transform:uppercase}
+
+/* Floating communication dock */
+.odo-final-dock{position:fixed;right:22px;bottom:22px;z-index:250;display:flex;flex-direction:column;gap:9px;align-items:flex-end}
+.odo-final-float{display:flex;align-items:center;gap:10px;background:rgba(8,8,7,.94);border:1px solid rgba(212,179,107,.38);color:var(--odo-cream);padding:10px 13px;border-radius:999px;box-shadow:0 14px 38px rgba(0,0,0,.5);text-decoration:none;cursor:pointer;transition:transform .25s ease,border-color .25s ease,background .25s ease}
+.odo-final-float:hover{transform:translateY(-3px);border-color:var(--odo-gold);background:#11110f}
+.odo-final-float .odo-final-icon{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#121210;border:1px solid rgba(246,241,232,.1)}
+.odo-final-float svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.odo-final-wa .odo-final-icon{background:#18a85b;color:#fff;border-color:#18a85b}
+.odo-final-float span:last-child{font-size:.55rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.odo-final-ai{width:54px;height:54px;padding:0;justify-content:center;border-radius:50%}.odo-final-ai .odo-final-icon{width:44px;height:44px;border:0;background:transparent}.odo-final-ai .odo-final-icon img{width:28px;height:28px;object-fit:contain}
+
+@keyframes odoFinalFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes odoFinalSpin{to{transform:rotate(360deg)}}
+@media(max-width:760px){.odo-final-actions{gap:5px}.odo-final-action{width:40px;height:40px}.odo-final-cart{padding:0 10px}.odo-final-saved{display:none}.hero-symbol{min-height:320px}.odo-hero-frame{width:min(420px,100%);border-radius:26px}.odo-final-dock{right:12px;bottom:12px}.odo-final-float span:last-child{font-size:.5rem}.odo-final-float .odo-final-icon{width:34px;height:34px}}
+@media(prefers-reduced-motion:reduce){.odo-hero-frame:before,.odo-hero-frame:after,.odo-hero-frame .hero-logo{animation:none!important}}
