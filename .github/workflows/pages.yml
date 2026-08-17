@@ -28,7 +28,7 @@ jobs:
           import re
           p=Path('index.html')
           text=p.read_text(encoding='utf-8')
-          for src in ['dynamic-products.js','product-engagement.js','odo-catalog-loader.js','dipesh-profile.js','order-tracking.js','product-reviews.js','return-exchange.js','stock-checkout-fix.js']:
+          for src in ['dynamic-products.js','product-engagement.js','odo-catalog-loader.js','dipesh-profile.js','order-tracking.js','product-reviews.js','return-exchange.js','stock-checkout-fix.js','odo-premium-v3.js','odo-contact-enhance.js']:
               text=re.sub(r'<script[^>]+src=["\']'+re.escape(src)+r'(?:\?[^"\']*)?[^>]*></script>', '', text, flags=re.I)
           for src in ['product-engagement.js?v=9','odo-catalog-loader.js?v=1','dipesh-profile.js?v=1','order-tracking.js?v=1','product-reviews.js?v=1','return-exchange.js?v=1']:
               tag=f'<script type="module" src="{src}"></script>'
@@ -123,6 +123,11 @@ jobs:
           page=Path('index.html'); seo=Path('.github/seo-head.html').read_text(encoding='utf-8'); text=page.read_text(encoding='utf-8')
           if seo not in text: page.write_text(text.replace('</head>',seo+'</head>',1),encoding='utf-8')
           PY
+      - name: Clean shared tracking parameters from visible URL
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'clean-url.js' index.html; then sed -i 's#</body>#<script src="clean-url.js"></script></body>#' index.html; fi
       - name: Apply ODO premium friendly UI layer
         shell: bash
         run: |
@@ -131,35 +136,17 @@ jobs:
           from pathlib import Path
           p=Path('index.html')
           text=p.read_text(encoding='utf-8')
-          css='<link rel="stylesheet" href="odo-premium-v3.css?v=3">'
+          css='<link rel="stylesheet" href="odo-premium-v3.css?v=4">'
           if css not in text:
               text=text.replace('</head>',css+'</head>',1)
-          js='<script src="odo-premium-v3.js?v=3"></script>'
+          js='<script type="module" src="odo-premium-v3.js?v=4"></script>'
           if js not in text:
               text=text.replace('</body>',js+'</body>')
+          contact='<script type="module" src="odo-contact-enhance.js?v=2"></script>'
+          if contact not in text:
+              text=text.replace('</body>',contact+'</body>')
           p.write_text(text,encoding='utf-8')
           PY
-      - name: Apply ODO UI v4 action + motion layer
-        shell: bash
-        run: |
-          set -e
-          python - <<'PY'
-          from pathlib import Path
-          p=Path('index.html')
-          text=p.read_text(encoding='utf-8')
-          css='<link rel="stylesheet" href=".github/odo-ui-v4.css?v=4">'
-          if css not in text:
-              text=text.replace('</head>',css+'</head>',1)
-          js='<script src=".github/odo-ui-v4.js?v=4"></script>'
-          if js not in text:
-              text=text.replace('</body>',js+'</body>')
-          p.write_text(text,encoding='utf-8')
-          PY
-      - name: Clean shared tracking parameters from visible URL
-        shell: bash
-        run: |
-          set -e
-          if ! grep -q 'clean-url.js' index.html; then sed -i 's#</body>#<script src="clean-url.js"></script></body>#' index.html; fi
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
