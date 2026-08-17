@@ -28,9 +28,9 @@ jobs:
           import re
           p=Path('index.html')
           text=p.read_text(encoding='utf-8')
-          for src in ['dynamic-products.js','product-engagement.js','odo-catalog-loader.js','dipesh-profile.js','order-tracking.js','product-reviews.js']:
+          for src in ['dynamic-products.js','product-engagement.js','odo-catalog-loader.js','dipesh-profile.js','order-tracking.js','product-reviews.js','return-exchange.js']:
               text=re.sub(r'<script[^>]+src=["\']'+re.escape(src)+r'(?:\?[^"\']*)?[^>]*></script>', '', text, flags=re.I)
-          for src in ['product-engagement.js?v=9','odo-catalog-loader.js?v=1','dipesh-profile.js?v=1','order-tracking.js?v=1','product-reviews.js?v=1']:
+          for src in ['product-engagement.js?v=9','odo-catalog-loader.js?v=1','dipesh-profile.js?v=1','order-tracking.js?v=1','product-reviews.js?v=1','return-exchange.js?v=1']:
               tag=f'<script type="module" src="{src}"></script>'
               if tag not in text:
                   text=text.replace('</body>',tag+'</body>')
@@ -97,6 +97,12 @@ jobs:
           set -e
           if ! grep -q 'product-reviews.js' index.html; then sed -i 's#</body>#<script type="module" src="product-reviews.js?v=1"></script></body>#' index.html; fi
           if ! grep -q 'admin-reviews.js' admin.html; then sed -i 's#</body>#<script type="module" src="admin-reviews.js"></script></body>#' admin.html; fi
+      - name: Add ODO returns and exchanges
+        shell: bash
+        run: |
+          set -e
+          if ! grep -q 'return-exchange.js' index.html; then sed -i 's#</body>#<script type="module" src="return-exchange.js?v=1"></script></body>#' index.html; fi
+          if ! grep -q 'admin-returns.js' admin.html; then sed -i 's#</body>#<script type="module" src="admin-returns.js"></script></body>#' admin.html; fi
       - name: Add website-only order confirmation flow
         shell: bash
         run: |
