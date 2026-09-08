@@ -1,1 +1,1 @@
-Restore baseline to eebbe239 after UI regression. Do not load destructive catalog-removal/runtime cleanup layers.
+Stable ODO baseline restored to eebbe239.
