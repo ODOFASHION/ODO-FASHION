@@ -128,22 +128,6 @@ jobs:
         run: |
           set -e
           if ! grep -q 'clean-url.js' index.html; then sed -i 's#</body>#<script src="clean-url.js"></script></body>#' index.html; fi
-      - name: Load definitive ODO controls UI
-        shell: bash
-        run: |
-          set -e
-          python - <<'PY'
-          from pathlib import Path
-          p=Path('index.html')
-          text=p.read_text(encoding='utf-8')
-          css='<link rel="stylesheet" href="odo-ui-v5.css?v=5">'
-          if css not in text:
-              text=text.replace('</head>',css+'</head>',1)
-          js='<script src="odo-ui-v5.js?v=5"></script>'
-          if js not in text:
-              text=text.replace('</body>',js+'</body>')
-          p.write_text(text,encoding='utf-8')
-          PY
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
